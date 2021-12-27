@@ -12,3 +12,6 @@ indent_size = 4
 [{package.json,*.yml,nightwatch.json}]
 indent_style = space
 indent_size = 2
+
+[.cookies]
+insert_final_newline = false

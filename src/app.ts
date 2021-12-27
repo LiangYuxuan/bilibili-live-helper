@@ -20,12 +20,14 @@ const logger = pino({
     sync: false,
 }));
 
-let cookies = '';
-try {
-    cookies = fs.readFileSync(path.resolve(process.cwd(), '.cookies'), {encoding: 'utf-8'});
-} catch (error) {
-    logger.fatal('载入.cookies文件失败: %o', error);
-    process.exit(-1);
+let cookies = process.env.COOKIES ?? '';
+if (cookies.length === 0) {
+    try {
+        cookies = fs.readFileSync(path.resolve(process.cwd(), '.cookies'), {encoding: 'utf-8'});
+    } catch (error) {
+        logger.fatal('载入.cookies文件失败: %o', error);
+        process.exit(-1);
+    }
 }
 
 const loadConfig = () => {

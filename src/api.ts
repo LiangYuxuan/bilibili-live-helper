@@ -396,95 +396,41 @@ export const doLiveDailySign = async (cookies: string): Promise<string> => {
     return result.message;
 };
 
-export interface FansMedalList {
-    uid: number;
-    target_id: number;
-    medal_id: number;
-    score: number;
-    level: number;
-    intimacy: number;
-    status: number;
-    source: number;
-    receive_channel: number;
-    is_receive: number;
-    master_status: number;
-    receive_time: string;
-    today_intimacy: number;
-    last_wear_time: number;
-    is_lighted: number;
-    medal_level: number;
-    next_intimacy: number;
+export interface FansMedal {
+    can_deleted: boolean;
     day_limit: number;
-    medal_name: string;
-    master_available: number;
-    guard_type: number;
-    lpl_status: number;
-    can_delete: boolean;
-    target_name: string;
-    target_face: string;
-    live_stream_status: number;
-    icon_code: number;
-    icon_text: string;
-    rank: string;
-    medal_color: number;
-    medal_color_start: number;
-    medal_color_end: number;
     guard_level: number;
-    medal_color_border: number;
-    today_feed: number;
-    todayFeed: number;
-    dayLimit: number;
-    uname: string;
-    color: number;
-    medalName: string;
     guard_medal_title: string;
-    anchorInfo: {
-        uid: number;
-        uname: string;
-        gender: number;
-        face: string;
-        silence: number;
-        masterVip: number;
-        masterRank: number;
-        masterLevel: number;
-        masterHeadpic: string;
-        masterVerify: number;
-        mobileVerified: number;
-        identification: number;
-        official: {
-            role: number;
-            title: string;
-            desc: string;
-        };
-        rank: number;
-        platform_user_level: number;
-        vip_type: number;
-        mobile_verify: number;
-        official_verify: {
-            role: number;
-            title: string;
-            desc: string;
-            type: number;
-        };
-    };
+    intimacy: number;
+    is_lighted: number;
+    level: number;
+    medal_name: string;
+    medal_color_border: number;
+    medal_color_end: number;
+    medal_color_start: number;
+    medal_id: number;
+    next_intimacy: number;
+    today_feed: number;
     roomid: number;
+    status: number;
+    target_id: number;
+    target_name: string;
+    uname: string;
 }
 
 export interface MedalList {
-    name: string;
     count: number;
-    medalCount: number;
-    pageinfo: {
-        totalpages: number;
-        curPage: number;
+    page_info: {
+        cur_page: number;
+        total_page: number;
     };
-    fansMedalList: FansMedalList[];
+    items: FansMedal[];
 }
 
 export const getMedalList = async (
-    cookies: string, page = 1, pageSize = 10,
+    cookies: string, page = 1, page_size = 10,
 ): Promise<MedalList> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/i/api/medal', {
+    const result: APIReturn = await got.get('https://api.live.bilibili.com/xlive/app-ucenter/v1/user/GetMyMedals', {
         headers: {
             'User-Agent': UserAgent,
             'Cookie': cookies,
@@ -492,7 +438,7 @@ export const getMedalList = async (
         },
         searchParams: {
             page: page,
-            pageSize: pageSize,
+            page_size: page_size,
         },
     }).json();
 

@@ -278,7 +278,7 @@ const littleHeartHandler = async (medals: Medal[], retry = false): Promise<void>
                     logger.info('粉丝勋章%s (%s) 打卡成功: 粉丝勋章已点亮，亲密度+100', medal.medalName, medal.targetName);
                 }
             } catch (error) {
-                logger.info('粉丝勋章%s (%s) 打卡失败', medal.medalName, medal.targetName);
+                logger.error('粉丝勋章%s (%s) 打卡失败', medal.medalName, medal.targetName);
                 logger.error(error);
             }
 
@@ -351,7 +351,7 @@ const littleHeartHandler = async (medals: Medal[], retry = false): Promise<void>
                                 value * sendNum, restIntimacy,
                             );
                         } catch (error) {
-                            logger.error('向%s送出礼物失败', medal.medalName);
+                            logger.error('向%s送出礼物%sx%d失败', medal.medalName, gift.gift_name, sendNum);
                             logger.error(error);
                         }
                     }

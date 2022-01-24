@@ -112,7 +112,7 @@ const littleHeartHandler = async (medals: Medal[], retry = false): Promise<void>
         return (
             value.gift_id === 30607 && value.expire_at - gifts.time > 60 * 60 * 24 * 6
         ) ? value.gift_num : 0;
-    }).reduce((prev, curr) => prev + curr);
+    }).reduce((prev, curr) => prev + curr, 0);
 
     if (count >= 24) {
         if (!retry) {

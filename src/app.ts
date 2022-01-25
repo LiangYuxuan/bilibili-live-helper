@@ -2,7 +2,7 @@ import assert from 'assert';
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import pino from 'pino';
+import winston from 'winston';
 
 import {
     reportVideoClick, reportVideoHeartbeat, reportShare, getUserInfo,
@@ -14,18 +14,37 @@ import {getFullMedalList, Medal, calcHeartbeatHMAC} from './utils.js';
 
 dotenv.config();
 
-const logger = pino({
-    level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-}, pino.destination({
-    sync: false,
-}));
+const logger = winston.createLogger({
+    format: winston.format.combine(
+        winston.format.errors({
+            stack: false,
+        }),
+        winston.format.splat(),
+        winston.format.timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss.SSS ZZ',
+        }),
+    ),
+    transports: [
+        new winston.transports.Console({
+            level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
+            format: winston.format.combine(
+                winston.format((info) => {
+                    info.level = info.level.toUpperCase();
+                    return info;
+                })(),
+                winston.format.colorize(),
+                winston.format.printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`),
+            ),
+        }),
+    ],
+});
 
 let cookies = process.env.COOKIES ?? '';
 if (cookies.length === 0) {
     try {
         cookies = fs.readFileSync(path.resolve(process.cwd(), '.cookies'), {encoding: 'utf-8'});
     } catch (error) {
-        logger.fatal('载入.cookies文件失败: %o', error);
+        logger.crit('载入.cookies文件失败: %o', error);
         process.exit(-1);
     }
 }
@@ -154,7 +173,7 @@ const littleHeartHandler = async (medals: Medal[], retry = false): Promise<void>
 
         uid = userInfo.uid;
     } catch (error) {
-        logger.fatal(error);
+        logger.crit(error);
         process.exit(-2);
     }
 

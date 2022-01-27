@@ -2,8 +2,8 @@ import assert from 'assert';
 import path from 'path';
 import fs from 'fs';
 import dotenv from 'dotenv';
-import winston from 'winston';
 
+import logger from './logger.js';
 import {
     reportVideoClick, reportVideoHeartbeat, reportShare, getUserInfo,
     getNewDynamic, DynamicCard, doLiveDailySign, getGroupList, doGroupSign,
@@ -13,31 +13,6 @@ import {
 import {getFullMedalList, Medal, calcHeartbeatHMAC} from './utils.js';
 
 dotenv.config();
-
-const logger = winston.createLogger({
-    format: winston.format.combine(
-        winston.format.errors({
-            stack: false,
-        }),
-        winston.format.splat(),
-        winston.format.timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss.SSS ZZ',
-        }),
-    ),
-    transports: [
-        new winston.transports.Console({
-            level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
-            format: winston.format.combine(
-                winston.format((info) => {
-                    info.level = info.level.toUpperCase();
-                    return info;
-                })(),
-                winston.format.colorize(),
-                winston.format.printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`),
-            ),
-        }),
-    ],
-});
 
 let cookies = process.env.COOKIES ?? '';
 if (cookies.length === 0) {

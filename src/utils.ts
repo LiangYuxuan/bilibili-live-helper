@@ -1,5 +1,3 @@
-import CryptoJS from 'crypto-js';
-
 import {getMedalList, MedalList, FansMedal} from './api.js';
 
 export interface Medal {
@@ -92,45 +90,4 @@ export const showMedalStatus = async (cookies: string) => {
         const remain = Math.ceil((value.nextIntimacy - value.intimacy) / value.todayIntimacy);
         console.log(`${name}\t${level}\t${current}\t${next}\t+${today}\t${remain} dys`);
     });
-};
-
-export const calcHeartbeatHMAC = (
-    key: string, rules: number[],
-    parentAreaID: number, areaID: number, sequence: number, roomID: number,
-    buvid: string, uuid: string,
-    ets: number, time: number, ts: number,
-): string => {
-    const data = {
-        platform: 'web',
-        parent_id: parentAreaID,
-        area_id: areaID,
-        seq_id: sequence,
-        room_id: roomID,
-        buvid: buvid,
-        uuid: uuid,
-        ets: ets,
-        time: time,
-        ts: ts,
-    };
-    let result = JSON.stringify(data);
-
-    /* eslint-disable new-cap */
-    for (const rule of rules) {
-        if (rule === 0) {
-            result = CryptoJS.HmacMD5(result, key).toString(CryptoJS.enc.Hex);
-        } else if (rule === 1) {
-            result = CryptoJS.HmacSHA1(result, key).toString(CryptoJS.enc.Hex);
-        } else if (rule === 2) {
-            result = CryptoJS.HmacSHA256(result, key).toString(CryptoJS.enc.Hex);
-        } else if (rule === 3) {
-            result = CryptoJS.HmacSHA224(result, key).toString(CryptoJS.enc.Hex);
-        } else if (rule === 4) {
-            result = CryptoJS.HmacSHA512(result, key).toString(CryptoJS.enc.Hex);
-        } else if (rule === 5) {
-            result = CryptoJS.HmacSHA384(result, key).toString(CryptoJS.enc.Hex);
-        }
-    }
-    /* eslint-enable new-cap */
-
-    return result;
 };

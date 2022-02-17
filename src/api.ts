@@ -503,6 +503,137 @@ export const doGroupSign = async (
     return result.data as GroupSignInfo;
 };
 
+interface WearedMedal {
+    uid: number;
+    target_id: number;
+    medal_id: number;
+    score: number;
+    level: number;
+    intimacy: number;
+    status: number;
+    source: number;
+    receive_channel: number;
+    is_receive: number;
+    master_status: number;
+    receive_time: string;
+    today_intimacy: number;
+    last_wear_time: number;
+    is_lighted: number;
+    medal_level: number;
+    next_intimacy: number;
+    day_limit: number;
+    medal_name: string;
+    master_available: number;
+    guard_type: number;
+    lpl_status: number;
+    can_delete: boolean;
+    target_name: string;
+    target_face: string;
+    live_stream_status: number;
+    icon_code: number;
+    icon_text: string;
+    rank: string;
+    medal_color: number;
+    medal_color_start: number;
+    medal_color_end: number;
+    guard_level: number;
+    medal_color_border: number;
+    today_feed: number;
+    is_union: number;
+    roominfo: {
+        title: string;
+        room_id: number;
+        uid: number;
+        online: number;
+        live_time: number;
+        live_status: number;
+        short_id: number;
+        area: number;
+        area_name: string;
+        area_v2_id: number;
+        area_v2_name: string;
+        area_v2_parent_name: string;
+        area_v2_parent_id: number;
+        uname: string;
+        face: string;
+        tag_name: string;
+        tags: string;
+        cover_from_user: string;
+        keyframe: string;
+        lock_till: string;
+        hidden_till: string;
+        broadcast_type: number;
+    };
+}
+
+export const getWearedMedal = async (cookies: string): Promise<WearedMedal | undefined> => {
+    const csrf = extractCSRF(cookies);
+
+    assert(csrf !== undefined, '获取CSRF值失败');
+
+    const result: APIReturn = await got.post('https://api.live.bilibili.com/live_user/v1/UserInfo/get_weared_medal', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://live.bilibili.com/',
+        },
+        form: {
+            csrf: csrf,
+            csrf_token: csrf,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+
+    if (result.data instanceof Array) {
+        return;
+    }
+
+    return result.data as WearedMedal;
+};
+
+export const wearMedal = async (cookies: string, medalID: number): Promise<void> => {
+    const csrf = extractCSRF(cookies);
+
+    assert(csrf !== undefined, '获取CSRF值失败');
+
+    const result: APIReturn = await got.post('https://api.live.bilibili.com/xlive/web-room/v1/fansMedal/wear', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://live.bilibili.com/',
+        },
+        form: {
+            medal_id: medalID,
+
+            csrf: csrf,
+            csrf_token: csrf,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+};
+
+export const takeOffMedal = async (cookies: string): Promise<void> => {
+    const csrf = extractCSRF(cookies);
+
+    assert(csrf !== undefined, '获取CSRF值失败');
+
+    const result: APIReturn = await got.post('https://api.live.bilibili.com/xlive/web-room/v1/fansMedal/take_off', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://live.bilibili.com/',
+        },
+        form: {
+            csrf: csrf,
+            csrf_token: csrf,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+};
+
 interface RoomInfo {
     uid: number;
     room_id: number;

@@ -6,7 +6,7 @@ import login from './modules/login.js';
 import watch from './modules/watch.js';
 import share from './modules/share.js';
 import signin from './modules/signin.js';
-import groupSignIn from './modules/groupSignIn.js';
+import groupSignIn from './modules/groupSignin.js';
 import danmu from './modules/danmu.js';
 import gift from './modules/gift.js';
 import heartbeat from './modules/heartbeat.js';
@@ -26,7 +26,7 @@ interface Config {
     sendGiftTime: number,
 }
 
-export default async (cookies: string, config: Config) => {
+export default async (cookies: string, config: Config): Promise<[number, [boolean, string][]]> => {
     const [userInfo, medals] = await Promise.all([
         getUserInfo(cookies),
         getFullMedalList(cookies),
@@ -59,6 +59,7 @@ export default async (cookies: string, config: Config) => {
         [config.littleHeart, '获取小心心', heartbeat],
     ];
 
+    let successCount = 0;
     for (const [cast, name, module] of castTable) {
         if (cast) {
             for (let i = 0; i < 3; i++) {
@@ -71,6 +72,7 @@ export default async (cookies: string, config: Config) => {
                         sendGiftType: config.sendGiftType,
                         sendGiftTime: config.sendGiftTime,
                     }));
+                    ++successCount;
                     break;
                 } catch (error) {
                     if (error instanceof Array) {
@@ -83,4 +85,6 @@ export default async (cookies: string, config: Config) => {
             }
         }
     }
+
+    return [successCount, reportLog];
 };

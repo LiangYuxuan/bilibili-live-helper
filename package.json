@@ -16,9 +16,11 @@
   "author": "Rhythm",
   "license": "MIT",
   "dependencies": {
+    "@types/node-cron": "^3.0.1",
     "crypto-js": "^4.1.1",
     "dotenv": "^10.0.0",
     "got": "^12.0.0",
+    "node-cron": "^3.0.0",
     "winston": "^3.4.0"
   },
   "devDependencies": {

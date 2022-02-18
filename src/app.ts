@@ -28,10 +28,10 @@ const config = {
 const pushKey = process.env.PUSHKEY ?? '';
 const cronExp = process.env.CRON_EXP ?? '';
 
-let cookies = process.env.COOKIES ?? '';
+let cookies = process.env.COOKIES?.trim() ?? '';
 if (cookies.length === 0) {
     try {
-        cookies = fs.readFileSync(path.resolve(process.cwd(), '.cookies'), {encoding: 'utf-8'});
+        cookies = fs.readFileSync(path.resolve(process.cwd(), '.cookies'), {encoding: 'utf-8'}).trim();
     } catch (error) {
         logger.crit('载入.cookies文件失败: %o', error);
         process.exit(-1);

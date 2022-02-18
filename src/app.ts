@@ -55,9 +55,9 @@ const mainHandler = async () => {
     }
 
     if (pushKey.length > 0) {
-        const status = successCount === 8 && reportLog.reduce(
+        const status = successCount === 8 && (reportLog.reduce(
             (prev, [success]) => prev >= 3 ? 3 : (success ? 0 : prev + 1), 0,
-        ) >= 3;
+        ) >= 3);
         const reportText = reportLog.map((value) => `${value[0] ? '✅' : '❌'}${value[1]}`).join('\n\n');
         await pushToPushDeer(pushKey, '# ' + (status ? '✅B站直播日常成功' : '❌B站直播日常失败'), reportText);
     } else {

@@ -31,4 +31,4 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
           TARGET: ${{ secrets.REMOTE_TARGET }}
           ARGS: "-avz --delete"
-          EXCLUDE: "/.git/, /.github/, .env .cookies"
+          EXCLUDE: "/.git/, /.github/, .env, .cookies"

@@ -17,20 +17,24 @@ export default async (
         for (const medal of medals) {
             let roomID = medal.roomID;
             if (roomID < 10000) {
+                let fetchStatus = false;
                 for (let i = 0; i < 3; i++) {
                     try {
                         const roomInfo = await getRoomInfo(cookies, roomID);
                         roomID = roomInfo.room_id;
+                        fetchStatus = true;
                         break;
                     } catch (error) {
                         logger.error('房间%d信息获取失败', medal.roomID);
                         reportLog.push([false, util.format('房间%d信息获取失败', medal.roomID)]);
                     }
                 }
-            }
-            if (roomID < 10000) {
-                // failed to get room info, skip this medal
-                continue;
+                if (!fetchStatus) {
+                    // failed to get room info, skip this medal
+                    logger.error('跳过徽章%d', medal.medalName);
+                    reportLog.push([false, util.format('跳过徽章%d', medal.medalName)]);
+                    continue;
+                }
             }
 
             await wearMedal(cookies, medal.medalID);

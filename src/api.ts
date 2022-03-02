@@ -855,6 +855,42 @@ export const getGiftConfig = async (cookies: string): Promise<GiftInfo[]> => {
     return result.data as GiftInfo[];
 };
 
+interface RoomInitInfo {
+    room_id: number;
+    short_id: number;
+    uid: number;
+    need_p2p: number;
+    is_hidden: boolean;
+    is_locked: boolean;
+    is_portrait: boolean;
+    live_status: number;
+    hidden_till: number;
+    lock_till: number;
+    encrypted: boolean;
+    pwd_verified: boolean;
+    live_time: number;
+    room_shield: number;
+    is_sp: number;
+    special_type: number;
+}
+
+export const doRoomInit = async (cookies: string, roomID: number): Promise<RoomInitInfo> => {
+    const result: APIReturn = await got.get('https://api.live.bilibili.com/room/v1/Room/room_init', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://live.bilibili.com/',
+        },
+        searchParams: {
+            id: roomID,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+
+    return result.data as RoomInitInfo;
+};
+
 export const sendGiftBag = async (
     cookies: string, uid: number, gift_id: number, ruid: number,
     gift_num: number, bag_id: number, biz_id: number, rnd: number,

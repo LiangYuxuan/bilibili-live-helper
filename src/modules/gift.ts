@@ -1,7 +1,7 @@
 import util from 'util';
 
 import logger from '../logger.js';
-import {getGiftBagList, getGiftConfig, sendGiftBag} from './../api.js';
+import {getGiftBagList, getGiftConfig, doRoomInit, sendGiftBag} from './../api.js';
 import {getFullMedalList} from './../utils.js';
 
 export default async (
@@ -39,7 +39,20 @@ export default async (
 
             for (const roomID of roomIDs) {
                 const medal = medals.filter((value) => value.roomID === roomID)[0];
-                if (!medal) continue;
+                if (!medal) {
+                    logger.error('无法找到房间%d对应的粉丝勋章', roomID);
+                    reportLog.push([false, util.format('无法找到房间%d对应的粉丝勋章', roomID)]);
+                    continue;
+                }
+
+                let roomInfo;
+                try {
+                    roomInfo = await doRoomInit(cookies, roomID);
+                } catch (error) {
+                    logger.error('房间%d信息获取失败', roomID);
+                    reportLog.push([false, util.format('房间%d信息获取失败', roomID)]);
+                    continue;
+                }
 
                 let restIntimacy = medal.dayLimit - medal.todayIntimacy;
                 logger.debug('%s Daily Intimacy Rest %d', medal.medalName, restIntimacy);
@@ -61,7 +74,7 @@ export default async (
                     try {
                         await sendGiftBag(
                             cookies, uid, gift.gift_id, medal.targetID, sendNum,
-                            gift.bag_id, roomID, Math.round(Date.now() / 1000),
+                            gift.bag_id, roomInfo.room_id, Math.round(Date.now() / 1000),
                         );
 
                         gift.gift_num -= sendNum;

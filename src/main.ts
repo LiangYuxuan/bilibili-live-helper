@@ -9,7 +9,7 @@ import signin from './modules/signin.js';
 import groupSignIn from './modules/groupSignin.js';
 import danmu from './modules/danmu.js';
 import gift from './modules/gift.js';
-import heartbeat from './modules/heartbeat.js';
+// import heartbeat from './modules/heartbeat.js';
 
 interface Config {
     login: boolean,
@@ -56,7 +56,7 @@ export default async (cookies: string, config: Config): Promise<[number, [boolea
         [config.groupDailySign, '应援团签到', groupSignIn],
         [config.medalDanmu, '粉丝勋章弹幕', danmu],
         [config.sendGift, '赠送背包礼物', gift],
-        [config.littleHeart, '获取小心心', heartbeat],
+        // [config.littleHeart, '获取小心心', heartbeat],
     ];
 
     let successCount = 0;

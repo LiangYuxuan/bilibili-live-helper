@@ -39,6 +39,18 @@ if (cookies.length === 0) {
 }
 
 const mainHandler = async () => {
+    const toggles = [
+        config.login,
+        config.watchVideo,
+        config.shareVideo,
+        config.liveDailySign,
+        config.groupDailySign,
+        config.medalDanmu,
+        config.sendGift,
+        // config.littleHeart,
+    ];
+
+    const successTarget = toggles.reduce((sum, value) => sum + (value ? 1 : 0), 0);
     let successCount = 0;
     let reportLog: [boolean, string][];
     try {
@@ -55,7 +67,7 @@ const mainHandler = async () => {
     }
 
     if (pushKey.length > 0) {
-        const status = successCount === 8 && (reportLog.reduce(
+        const status = successCount === successTarget && (reportLog.reduce(
             (prev, [success]) => prev >= 3 ? 3 : (success ? 0 : prev + 1), 0,
         ) < 3);
         const reportText = reportLog.map((value) => `${value[0] ? '✅' : '❌'}${value[1]}`).join('\n\n');

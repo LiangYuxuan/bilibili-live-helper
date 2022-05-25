@@ -24,6 +24,7 @@ const config = {
         (process.env.SEND_GIFT_TYPE ?? '').split(',').map((value) => parseInt(value)).filter((value) => !isNaN(value)),
     sendGiftTime: parseInt(process.env.SEND_GIFT_TIME ?? '') ?? 1,
     like: !!parseInt(process.env.LIKE ?? ''),
+    shareLive: !!parseInt(process.env.SHARE_LIVE ?? ''),
 };
 const pushKey = process.env.PUSHKEY ?? '';
 const cronExp = process.env.CRON_EXP ?? '';

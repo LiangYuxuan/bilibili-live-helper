@@ -10,6 +10,7 @@ import groupSignIn from './modules/groupSignin.js';
 import danmu from './modules/danmu.js';
 import gift from './modules/gift.js';
 import like from './modules/like.js';
+import shareLive from './modules/shareLive.js';
 
 interface Config {
     login: boolean,
@@ -24,6 +25,7 @@ interface Config {
     sendGiftType: number[],
     sendGiftTime: number,
     like: boolean,
+    shareLive: boolean,
 }
 
 export default async (cookies: string, config: Config): Promise<[boolean, [boolean, string][]]> => {
@@ -57,6 +59,7 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
         [config.medalDanmu, '粉丝勋章弹幕', danmu],
         [config.sendGift, '赠送背包礼物', gift],
         [config.like, '直播间点赞', like],
+        [config.shareLive, '直播间分享', shareLive],
     ];
 
     let isAllSuccess = true;

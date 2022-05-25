@@ -26,7 +26,7 @@ interface Config {
     sendGiftTime: number,
 }
 
-export default async (cookies: string, config: Config): Promise<[number, [boolean, string][]]> => {
+export default async (cookies: string, config: Config): Promise<[boolean, [boolean, string][]]> => {
     const [userInfo, medals] = await Promise.all([
         getUserInfo(cookies),
         getFullMedalList(cookies),
@@ -59,7 +59,7 @@ export default async (cookies: string, config: Config): Promise<[number, [boolea
         // [config.littleHeart, '获取小心心', heartbeat],
     ];
 
-    let successCount = 0;
+    let isAllSuccess = true;
     for (const [cast, name, module] of castTable) {
         if (cast) {
             for (let i = 0; i < 3; i++) {
@@ -72,9 +72,9 @@ export default async (cookies: string, config: Config): Promise<[number, [boolea
                         sendGiftType: config.sendGiftType,
                         sendGiftTime: config.sendGiftTime,
                     }));
-                    ++successCount;
                     break;
                 } catch (error) {
+                    isAllSuccess = false;
                     if (error instanceof Array) {
                         reportLog.push(...error);
                     } else {
@@ -86,5 +86,5 @@ export default async (cookies: string, config: Config): Promise<[number, [boolea
         }
     }
 
-    return [successCount, reportLog];
+    return [isAllSuccess, reportLog];
 };

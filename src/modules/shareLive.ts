@@ -37,7 +37,7 @@ export default async (cookies: string): Promise<[boolean, string][]> => {
                 }
             }
 
-            for (let count = 0; count < 3; count++) {
+            for (let count = 0; count < 5; count++) {
                 for (let i = 0; i < 3; i++) {
                     try {
                         logger.debug('Share Room %d (%d) (%s)', roomID, medal.roomID, medal.targetName);

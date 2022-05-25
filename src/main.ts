@@ -9,7 +9,7 @@ import signin from './modules/signin.js';
 import groupSignIn from './modules/groupSignin.js';
 import danmu from './modules/danmu.js';
 import gift from './modules/gift.js';
-// import heartbeat from './modules/heartbeat.js';
+import like from './modules/like.js';
 
 interface Config {
     login: boolean,
@@ -19,11 +19,11 @@ interface Config {
     groupDailySign: boolean,
     medalDanmu: boolean,
     medalDanmuContent: string[],
-    littleHeart: boolean,
     sendGift: boolean,
     roomIDs: number[],
     sendGiftType: number[],
     sendGiftTime: number,
+    like: boolean,
 }
 
 export default async (cookies: string, config: Config): Promise<[boolean, [boolean, string][]]> => {
@@ -56,7 +56,7 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
         [config.groupDailySign, '应援团签到', groupSignIn],
         [config.medalDanmu, '粉丝勋章弹幕', danmu],
         [config.sendGift, '赠送背包礼物', gift],
-        // [config.littleHeart, '获取小心心', heartbeat],
+        [config.like, '直播间点赞', like],
     ];
 
     let isAllSuccess = true;

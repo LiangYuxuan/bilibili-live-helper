@@ -1013,3 +1013,54 @@ export const inRoomHeartbeat = async (
 
     return result.data as InRoomReturn;
 };
+
+export const trigerInteract = async (
+    cookies: string, roomid: number,
+): Promise<void> => {
+    const csrf = extractCSRF(cookies);
+
+    assert(csrf !== undefined, '获取CSRF值失败');
+
+    const result: APIReturn = await got.post('https://api.live.bilibili.com/xlive/web-room/v1/index/TrigerInteract', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://www.bilibili.com/',
+        },
+        form: {
+            roomid: roomid,
+            interact_type: 3,
+
+            csrf: csrf,
+            csrf_token: csrf,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+};
+
+export const likeInteract = async (
+    cookies: string, roomid: number, uid: number, ts: number,
+): Promise<void> => {
+    const csrf = extractCSRF(cookies);
+
+    assert(csrf !== undefined, '获取CSRF值失败');
+
+    const result: APIReturn = await got.post('https://api.live.bilibili.com/xlive/web-ucenter/v1/interact/likeInteract', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://www.bilibili.com/',
+        },
+        form: {
+            roomid: roomid,
+            uid: uid,
+            ts: ts,
+
+            csrf: csrf,
+            csrf_token: csrf,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+};

@@ -17,13 +17,13 @@ const config = {
     groupDailySign: !!parseInt(process.env.GROUP_DAILY_SIGN ?? ''),
     medalDanmu: !!parseInt(process.env.MEDAL_DANMU ?? ''),
     medalDanmuContent: (process.env.MEDAL_DANMU_CONTENT ?? '').split(','),
-    littleHeart: !!parseInt(process.env.LITTLE_HEART ?? ''),
     sendGift: !!parseInt(process.env.SEND_GIFT ?? ''),
     roomIDs:
         (process.env.ROOM_ID ?? '').split(',').map((value) => parseInt(value)).filter((value) => !isNaN(value)),
     sendGiftType:
         (process.env.SEND_GIFT_TYPE ?? '').split(',').map((value) => parseInt(value)).filter((value) => !isNaN(value)),
     sendGiftTime: parseInt(process.env.SEND_GIFT_TIME ?? '') ?? 1,
+    like: !!parseInt(process.env.LIKE ?? ''),
 };
 const pushKey = process.env.PUSHKEY ?? '';
 const cronExp = process.env.CRON_EXP ?? '';

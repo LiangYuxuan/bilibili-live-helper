@@ -51,11 +51,11 @@ export default async (cookies: string): Promise<[boolean, string][]> => {
                     } catch (error) {
                         logger.error('点赞粉丝勋章%s (%s) 失败 (%d/3)', medal.medalName, medal.targetName, count + 1);
                         reportLog.push([false, util.format('点赞粉丝勋章%s (%s) 失败 (%d/3)', medal.medalName, medal.targetName, count + 1)]);
-                        await new Promise((resolve) => setTimeout(resolve, 4000));
+                        await new Promise((resolve) => setTimeout(resolve, 5000));
                     }
                 }
 
-                await new Promise((resolve) => setTimeout(resolve, 2000));
+                await new Promise((resolve) => setTimeout(resolve, 4000));
             }
         }
 

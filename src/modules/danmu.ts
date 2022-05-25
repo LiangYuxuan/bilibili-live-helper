@@ -60,7 +60,7 @@ export default async (
                 } catch (error) {
                     logger.error('粉丝勋章%s (%s) 打卡失败', medal.medalName, medal.targetName);
                     reportLog.push([false, util.format('粉丝勋章%s (%s) 打卡失败', medal.medalName, medal.targetName)]);
-                    await new Promise((resolve) => setTimeout(resolve, 3000));
+                    await new Promise((resolve) => setTimeout(resolve, 5000));
                 }
             }
 

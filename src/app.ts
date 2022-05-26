@@ -23,7 +23,7 @@ const config = {
     sendGiftType:
         (process.env.SEND_GIFT_TYPE ?? '').split(',').map((value) => parseInt(value)).filter((value) => !isNaN(value)),
     sendGiftTime: parseInt(process.env.SEND_GIFT_TIME ?? '') ?? 1,
-    like: !!parseInt(process.env.LIKE ?? ''),
+    likeLive: !!parseInt(process.env.LIKE_LIVE ?? ''),
     shareLive: !!parseInt(process.env.SHARE_LIVE ?? ''),
 };
 const pushKey = process.env.PUSHKEY ?? '';

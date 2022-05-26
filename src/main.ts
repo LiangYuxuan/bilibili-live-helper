@@ -9,7 +9,7 @@ import signin from './modules/signin.js';
 import groupSignIn from './modules/groupSignin.js';
 import danmu from './modules/danmu.js';
 import gift from './modules/gift.js';
-import like from './modules/like.js';
+import likeLive from './modules/likeLive.js';
 import shareLive from './modules/shareLive.js';
 
 interface Config {
@@ -24,7 +24,7 @@ interface Config {
     roomIDs: number[],
     sendGiftType: number[],
     sendGiftTime: number,
-    like: boolean,
+    likeLive: boolean,
     shareLive: boolean,
 }
 
@@ -58,7 +58,7 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
         [config.groupDailySign, '应援团签到', groupSignIn],
         [config.medalDanmu, '粉丝勋章弹幕', danmu],
         [config.sendGift, '赠送背包礼物', gift],
-        [config.like, '直播间点赞', like],
+        [config.likeLive, '直播间点赞', likeLive],
         [config.shareLive, '直播间分享', shareLive],
     ];
 

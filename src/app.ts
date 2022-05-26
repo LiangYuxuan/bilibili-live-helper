@@ -25,6 +25,7 @@ const config = {
     sendGiftTime: parseInt(process.env.SEND_GIFT_TIME ?? '') ?? 1,
     likeLive: !!parseInt(process.env.LIKE_LIVE ?? ''),
     shareLive: !!parseInt(process.env.SHARE_LIVE ?? ''),
+    watchLive: !!parseInt(process.env.WATCH_LIVE ?? ''),
 };
 const pushKey = process.env.PUSHKEY ?? '';
 const cronExp = process.env.CRON_EXP ?? '';

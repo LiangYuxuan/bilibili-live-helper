@@ -11,6 +11,7 @@ import danmu from './modules/danmu.js';
 import gift from './modules/gift.js';
 import likeLive from './modules/likeLive.js';
 import shareLive from './modules/shareLive.js';
+import watchLive from './modules/watchLive.js';
 
 interface Config {
     login: boolean,
@@ -26,6 +27,7 @@ interface Config {
     sendGiftTime: number,
     likeLive: boolean,
     shareLive: boolean,
+    watchLive: boolean,
 }
 
 export default async (cookies: string, config: Config): Promise<[boolean, [boolean, string][]]> => {
@@ -60,6 +62,7 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
         [config.sendGift, '赠送背包礼物', gift],
         [config.likeLive, '直播间点赞', likeLive],
         [config.shareLive, '直播间分享', shareLive],
+        [config.watchLive, '直播间观看', watchLive],
     ];
 
     let isAllSuccess = true;

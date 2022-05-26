@@ -77,6 +77,8 @@ const checkLogin = async (oauthKey: string) => {
         small: true,
     });
 
+    console.log('请扫描二维码登录');
+
     const url = await checkLogin(oauthKey);
 
     await got.get(url, {
@@ -85,6 +87,8 @@ const checkLogin = async (oauthKey: string) => {
             'Referer': 'https://passport.bilibili.com/',
         },
     });
+
+    console.log('登录成功，正在获取获取LIVE_BUVID...');
 
     let DedeUserID = url.match(/DedeUserID=([^&]+)/)?.[1];
     let DedeUserID__ckMd5 = url.match(/DedeUserID__ckMd5=([^&]+)/)?.[1];

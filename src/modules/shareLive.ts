@@ -44,13 +44,13 @@ export default async (cookies: string): Promise<[boolean, string][]> => {
 
                         await trigerInteract(cookies, roomID);
 
-                        logger.info('粉丝勋章%s (%s) 分享房间成功 (%d/3)', medal.medalName, medal.targetName, count + 1);
-                        reportLog.push([true, util.format('粉丝勋章%s (%s) 分享房间成功 (%d/3)', medal.medalName, medal.targetName, count + 1)]);
+                        logger.info('粉丝勋章%s (%s) 分享房间成功 (%d/5)', medal.medalName, medal.targetName, count + 1);
+                        reportLog.push([true, util.format('粉丝勋章%s (%s) 分享房间成功 (%d/5)', medal.medalName, medal.targetName, count + 1)]);
 
                         break;
                     } catch (error) {
-                        logger.error('粉丝勋章%s (%s) 分享房间失败 (%d/3)', medal.medalName, medal.targetName, count + 1);
-                        reportLog.push([false, util.format('粉丝勋章%s (%s) 分享房间失败 (%d/3)', medal.medalName, medal.targetName, count + 1)]);
+                        logger.error('粉丝勋章%s (%s) 分享房间失败 (%d/5)', medal.medalName, medal.targetName, count + 1);
+                        reportLog.push([false, util.format('粉丝勋章%s (%s) 分享房间失败 (%d/5)', medal.medalName, medal.targetName, count + 1)]);
                         await new Promise((resolve) => setTimeout(resolve, 5000));
                     }
                 }

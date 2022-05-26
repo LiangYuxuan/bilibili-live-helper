@@ -75,11 +75,11 @@ export default async (
             logger.debug('Take off weared medal');
         }
 
-        logger.info('粉丝勋章打卡成功');
-        reportLog.push([true, '粉丝勋章打卡成功']);
+        logger.info('粉丝勋章弹幕成功');
+        reportLog.push([true, '粉丝勋章弹幕成功']);
     } catch (error) {
         logger.error(error);
-        reportLog.push([false, '粉丝勋章打卡失败']);
+        reportLog.push([false, '粉丝勋章弹幕失败']);
         throw reportLog;
     }
 

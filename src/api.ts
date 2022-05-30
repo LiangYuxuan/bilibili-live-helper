@@ -86,6 +86,154 @@ export const reportShare = async (cookies: string, aid: number): Promise<string>
     return result.message;
 };
 
+interface NavInfo {
+    isLogin: boolean;
+    email_verified: number;
+    face: string;
+    face_nft: number;
+    face_nft_type: number;
+    level_info: {
+        current_level: number;
+        current_min: number;
+        current_exp: number;
+        next_exp: string;
+    };
+    mid: number;
+    mobile_verified: number;
+    money: number;
+    moral: number;
+    official: {
+        role: number;
+        title: string;
+        desc: string;
+        type: number;
+    };
+    officialVerify: {
+        type: number;
+        desc: string;
+    };
+    pendant: {
+        pid: number;
+        name: string;
+        image: string;
+        expire: number;
+        image_enhance: string;
+        image_enhance_frame: string;
+    };
+    scores: number;
+    uname: string;
+    vipDueDate: number;
+    vipStatus: number;
+    vipType: number;
+    vip_pay_type: number;
+    vip_theme_type: number;
+    vip_label: {
+        path: string;
+        text: string;
+        label_theme: string;
+        text_color: string;
+        bg_style: number;
+        bg_color: string;
+        border_color: string;
+    };
+    vip_avatar_subscript: number;
+    vip_nickname_color: string;
+    vip: {
+        type: number;
+        status: number;
+        due_date: number;
+        vip_pay_type: number;
+        theme_type: number;
+        label: {
+            path: string;
+            text: string;
+            label_theme: string;
+            text_color: string;
+            bg_style: number;
+            bg_color: string;
+            border_color: string;
+        };
+        avatar_subscript: number;
+        nickname_color: string;
+        role: number;
+        avatar_subscript_url: string;
+    };
+    wallet: {
+        mid: number;
+        bcoin_balance: number;
+        coupon_balance: number;
+        coupon_due_time: number;
+    };
+    has_shop: boolean;
+    shop_url: string;
+    allowance_count: number;
+    answer_status: number;
+    is_senior_member: number;
+}
+
+export const getNavInfo = async (cookies: string): Promise<NavInfo> => {
+    const result: APIReturn = await got.get('https://api.bilibili.com/x/web-interface/nav', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://www.bilibili.com/',
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+
+    return result.data as NavInfo;
+};
+
+interface PrivilegeData {
+    is_short_vip: boolean;
+    is_freight_open: boolean;
+    list: {
+        type: number;
+        state: number;
+        expire_time: number;
+        vip_type: number;
+        next_receive_days: number;
+        period_end_unix: number;
+    }[];
+}
+
+export const getPrivilege = async (cookies: string): Promise<PrivilegeData> => {
+    const result: APIReturn = await got.get('https://api.bilibili.com/x/vip/privilege/my', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://www.bilibili.com/',
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+
+    return result.data as PrivilegeData;
+};
+
+export const receivePrivilege = async (cookies: string, type: number): Promise<void> => {
+    const csrf = extractCSRF(cookies);
+
+    assert(csrf !== undefined, '获取CSRF值失败');
+
+    const result: APIReturn = await got.post('https://api.bilibili.com/x/vip/privilege/receive', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://www.bilibili.com/',
+        },
+        form: {
+            type: type,
+
+            csrf: csrf,
+            csrf_token: csrf,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+};
+
 interface UserInfo {
     uid: number;
     uname: string;

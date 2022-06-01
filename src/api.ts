@@ -234,6 +234,225 @@ export const receivePrivilege = async (cookies: string, type: number): Promise<v
     assert(result.code === 0, result.message);
 };
 
+interface UserCouponData {
+    page: {
+        currentPage: number;
+        pageSize: number;
+        totalCount: number;
+        totalPage: number;
+    };
+    result: {
+        activityId: number;
+        activityName: string;
+        couponToken: string;
+        couponMoney: number;
+        couponBalance: number;
+        status: number;
+        couponDueTime: number;
+        receiveTime: number;
+    }[];
+}
+
+export const getUserCoupon = async (
+    cookies: string, beginTime: string, endTime: string,
+    timestamp: number, currentPage = 1, pageSize = 10,
+): Promise<UserCouponData> => {
+    const result: APIReturn = await got.post('https://pay.bilibili.com/paywallet/coupon/listForUserCoupons', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://pay.bilibili.com/pay-v2-web/bcoin_record',
+        },
+        json: {
+            currentPage: currentPage,
+            pageSize: pageSize,
+            beginTime: beginTime,
+            endTime: endTime,
+            timestamp: timestamp,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+
+    return result.data as UserCouponData;
+};
+
+interface ElectricMonthData {
+    count: number;
+    list: {
+        uname: string;
+        avatar: string;
+        mid: number;
+        pay_mid: number;
+        rank: number;
+        trend_type: number;
+        vip_info: {
+            vipDueMsec: number;
+            vipStatus: number;
+            vipType: number;
+        };
+        message: string;
+        message_hidden: number;
+    }[];
+    total_count: number;
+    total: number;
+    special_day: number;
+}
+
+export const getElectricMonth = async (
+    cookies: string, mid: number,
+): Promise<ElectricMonthData> => {
+    const result: APIReturn = await got.get('https://api.bilibili.com/x/ugcpay-rank/elec/month/up', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://www.bilibili.com/',
+        },
+        searchParams: {
+            up_mid: mid,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+
+    return result.data as ElectricMonthData;
+};
+
+interface ElectricPayResultData {
+    mid: number;
+    up_mid: number;
+    order_no: string;
+    bp_num: number;
+    exp: number;
+    status: number;
+    msg: string;
+}
+
+export const doElectricPay = async (
+    cookies: string, bp_num: number, up_mid: number,
+    otype: string, oid: number,
+    is_bp_remains_prior = true,
+): Promise<ElectricPayResultData> => {
+    const csrf = extractCSRF(cookies);
+
+    assert(csrf !== undefined, '获取CSRF值失败');
+
+    const result: APIReturn = await got.post('https://api.bilibili.com/x/ugcpay/web/v2/trade/elec/pay/quick', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://www.bilibili.com/',
+        },
+        form: {
+            bp_num: bp_num,
+            up_mid: up_mid,
+            otype: otype,
+            oid: oid,
+            is_bp_remains_prior: is_bp_remains_prior ? 'true' : 'false',
+
+            csrf: csrf,
+            csrf_token: csrf,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+
+    return result.data as ElectricPayResultData;
+};
+
+export const sendElectricMessage = async (
+    cookies: string, order_id: string,
+    message: string,
+): Promise<void> => {
+    const csrf = extractCSRF(cookies);
+
+    assert(csrf !== undefined, '获取CSRF值失败');
+
+    const result: APIReturn = await got.post('https://api.bilibili.com/x/ugcpay/trade/elec/message', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://www.bilibili.com/',
+        },
+        form: {
+            order_id: order_id,
+            message: message,
+
+            csrf: csrf,
+            csrf_token: csrf,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+};
+
+interface BP2GoldData {
+    common_bp: number;
+    gold: number;
+    ios_bp: number;
+}
+
+export const getBP2Gold = async (cookies: string, bp: number, t: number): Promise<BP2GoldData> => {
+    const result: APIReturn = await got.get('https://api.live.bilibili.com/xlive/revenue/v1/wallet/bp2Gold', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://link.bilibili.com/',
+        },
+        searchParams: {
+            bp: bp,
+            t: t,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+
+    return result.data as BP2GoldData;
+};
+
+interface OrderData {
+    bp: number;
+    gold: number;
+    order_id: string;
+    status: number;
+}
+
+export const createOrder = async (
+    cookies: string, pay_bp: number, common_bp: number, ios_bp: number,
+    goods_type = 2, goods_id = 1, goods_num: number,
+    context_type = 11, context_id = 1, platform = 'pc',
+): Promise<OrderData> => {
+    const csrf = extractCSRF(cookies);
+
+    assert(csrf !== undefined, '获取CSRF值失败');
+
+    const result: APIReturn = await got.post('https://api.live.bilibili.com/xlive/revenue/v1/order/createOrder', {
+        headers: {
+            'User-Agent': UserAgent,
+            'Cookie': cookies,
+            'Referer': 'https://link.bilibili.com/',
+        },
+        form: {
+            pay_bp: pay_bp,
+            common_bp: common_bp,
+            ios_bp: ios_bp,
+            goods_type: goods_type,
+            goods_id: goods_id,
+            goods_num: goods_num,
+            context_type: context_type,
+            context_id: context_id,
+            platform: platform,
+
+            csrf: csrf,
+            csrf_token: csrf,
+        },
+    }).json();
+
+    assert(result.code === 0, result.message);
+
+    return result.data as OrderData;
+};
+
 interface UserInfo {
     uid: number;
     uname: string;

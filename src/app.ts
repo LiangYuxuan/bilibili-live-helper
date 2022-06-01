@@ -26,6 +26,12 @@ const config = {
     likeLive: !!parseInt(process.env.LIKE_LIVE ?? ''),
     shareLive: !!parseInt(process.env.SHARE_LIVE ?? ''),
     watchLive: !!parseInt(process.env.WATCH_LIVE ?? ''),
+    getCoupon: !!parseInt(process.env.GET_COUPON ?? ''),
+    useCoupon: !!parseInt(process.env.USE_COUPON ?? ''),
+    useCouponMode: parseInt(process.env.USE_COUPON_MODE ?? '') ?? 1,
+    useCouponTime: parseInt(process.env.USE_COUPON_TIME ?? '') ?? 1,
+    useCouponRest: !!parseInt(process.env.USE_COUPON_REST ?? ''),
+    chargeMsg: process.env.CHARGE_MSG ?? '',
 };
 const pushKey = process.env.PUSHKEY ?? '';
 const cronExp = process.env.CRON_EXP ?? '';

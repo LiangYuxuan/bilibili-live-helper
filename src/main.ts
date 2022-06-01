@@ -5,6 +5,8 @@ import {getFullMedalList, Medal} from './utils.js';
 import login from './modules/login.js';
 import watch from './modules/watch.js';
 import share from './modules/share.js';
+import getCoupon from './modules/getCoupon.js';
+import useCoupon from './modules/useCoupon.js';
 import signin from './modules/signin.js';
 import groupSignIn from './modules/groupSignin.js';
 import danmu from './modules/danmu.js';
@@ -28,6 +30,12 @@ interface Config {
     likeLive: boolean,
     shareLive: boolean,
     watchLive: boolean,
+    getCoupon: boolean,
+    useCoupon: boolean,
+    useCouponMode: number,
+    useCouponTime: number,
+    useCouponRest: boolean,
+    chargeMsg: string,
 }
 
 export default async (cookies: string, config: Config): Promise<[boolean, [boolean, string][]]> => {
@@ -47,6 +55,10 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
             cookies: string, {uid, medals, danmuList, roomIDs, sendGiftType, sendGiftTime}: {
                 uid: number,
                 medals: Medal[],
+                useCouponMode: number,
+                useCouponTime: number,
+                useCouponRest: boolean,
+                chargeMsg: string,
                 danmuList: string[],
                 roomIDs: number[],
                 sendGiftType: number[],
@@ -56,6 +68,8 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
         [config.login, '主站签到', login],
         [config.watchVideo, '主站观看视频', watch],
         [config.shareVideo, '主站分享视频', share],
+        [config.getCoupon, '领取B币卷', getCoupon],
+        [config.useCoupon, '使用B币卷', useCoupon],
         [config.liveDailySign, '直播区签到', signin],
         [config.groupDailySign, '应援团签到', groupSignIn],
         [config.medalDanmu, '粉丝勋章弹幕', danmu],
@@ -73,6 +87,10 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
                     reportLog.push(...await module(cookies, {
                         uid: uid,
                         medals: medals,
+                        useCouponMode: config.useCouponMode,
+                        useCouponTime: config.useCouponTime,
+                        useCouponRest: config.useCouponRest,
+                        chargeMsg: config.chargeMsg,
                         danmuList: config.medalDanmuContent,
                         roomIDs: config.roomIDs,
                         sendGiftType: config.sendGiftType,

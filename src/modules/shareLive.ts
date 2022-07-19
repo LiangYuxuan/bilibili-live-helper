@@ -37,26 +37,24 @@ export default async (cookies: string): Promise<[boolean, string][]> => {
                 }
             }
 
-            for (let count = 0; count < 5; count++) {
-                for (let i = 0; i < 3; i++) {
-                    try {
-                        logger.debug('Share Room %d (%d) (%s)', roomID, medal.roomID, medal.targetName);
+            for (let i = 0; i < 3; i++) {
+                try {
+                    logger.debug('Share Room %d (%d) (%s)', roomID, medal.roomID, medal.targetName);
 
-                        await trigerInteract(cookies, roomID);
+                    await trigerInteract(cookies, roomID);
 
-                        logger.info('粉丝勋章%s (%s) 分享房间成功 (%d/5)', medal.medalName, medal.targetName, count + 1);
-                        reportLog.push([true, util.format('粉丝勋章%s (%s) 分享房间成功 (%d/5)', medal.medalName, medal.targetName, count + 1)]);
+                    logger.info('粉丝勋章%s (%s) 分享房间成功', medal.medalName, medal.targetName);
+                    reportLog.push([true, util.format('粉丝勋章%s (%s) 分享房间成功', medal.medalName, medal.targetName)]);
 
-                        break;
-                    } catch (error) {
-                        logger.error('粉丝勋章%s (%s) 分享房间失败 (%d/5)', medal.medalName, medal.targetName, count + 1);
-                        reportLog.push([false, util.format('粉丝勋章%s (%s) 分享房间失败 (%d/5)', medal.medalName, medal.targetName, count + 1)]);
-                        await new Promise((resolve) => setTimeout(resolve, 5000));
-                    }
+                    break;
+                } catch (error) {
+                    logger.error('粉丝勋章%s (%s) 分享房间失败', medal.medalName, medal.targetName);
+                    reportLog.push([false, util.format('粉丝勋章%s (%s) 分享房间失败', medal.medalName, medal.targetName)]);
+                    await new Promise((resolve) => setTimeout(resolve, 5000));
                 }
-
-                await new Promise((resolve) => setTimeout(resolve, 4000));
             }
+
+            await new Promise((resolve) => setTimeout(resolve, 4000));
         }
 
         logger.info('直播间分享成功');

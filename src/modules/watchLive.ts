@@ -79,7 +79,7 @@ const roomHeartbeat = async (
     let timestamp = result.timestamp;
     let key = result.secret_key;
     let rules = result.secret_rule;
-    while (duration < 30 * 60) {
+    while (duration < 65 * 60) { // 65 minutes
         await new Promise((resolve) => setTimeout(resolve, nextTime * 1000));
         duration += nextTime;
 

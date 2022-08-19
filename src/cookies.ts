@@ -77,7 +77,7 @@ const checkLogin = async (oauthKey: string) => {
         small: true,
     });
 
-    console.log('请扫描二维码登录');
+    console.log('请使用哔哩哔哩手机客户端扫描二维码登录');
 
     const url = await checkLogin(oauthKey);
 

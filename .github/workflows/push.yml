@@ -25,7 +25,7 @@ jobs:
       - run: npm run build
 
       - uses: easingthemes/ssh-deploy@v4.1.8
-        env:
+        with:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}

@@ -2,12 +2,14 @@
     "compilerOptions": {
         "target": "es2020",
         "module": "es2020",
-        "outDir": "./dist",
         "rootDir": "./src",
-        "strict": true,
+        // "types": ["@peeky/test"],
+        "sourceMap": true,
+        "outDir": "./dist",
+        "moduleResolution": "bundler",
         "esModuleInterop": true,
-        "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
-        "moduleResolution": "node16"
+        "strict": true,
+        "skipLibCheck": true
     }
 }

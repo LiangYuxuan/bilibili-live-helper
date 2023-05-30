@@ -9,7 +9,12 @@ import { getFullMedalList } from '../utils.js';
 export default async (cookies: string, {
     uid, roomIDs, sendGiftType, sendGiftTime,
 }:
-{ uid: number, roomIDs: number[], sendGiftType: number[], sendGiftTime: number }): Promise<[boolean, string][]> => {
+{
+    uid: number,
+    roomIDs: number[],
+    sendGiftType: number[],
+    sendGiftTime: number,
+}): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
 
     try {
@@ -37,7 +42,8 @@ export default async (cookies: string, {
 
             logger.debug('Pending Gifts: %o', pending);
 
-            for (const roomID of roomIDs) {
+            for (let i = 0; i < roomIDs.length; i += 1) {
+                const roomID = roomIDs[i];
                 const medal = medals.filter((value) => value.roomID === roomID)[0];
                 if (!medal) {
                     logger.error('无法找到房间%d对应的粉丝勋章', roomID);
@@ -57,7 +63,8 @@ export default async (cookies: string, {
                 let restIntimacy = medal.dayLimit - medal.todayIntimacy;
                 logger.debug('%s Daily Intimacy Rest %d', medal.medalName, restIntimacy);
 
-                for (const gift of pending) {
+                for (let j = 0; j < pending.length; j += 1) {
+                    const gift = pending[j];
                     if (gift.gift_num === 0) continue;
 
                     const value = values.get(gift.gift_id);
@@ -123,7 +130,6 @@ export default async (cookies: string, {
     } catch (error) {
         logger.error(error);
         reportLog.push([false, '赠送背包礼物失败']);
-        throw reportLog;
     }
 
     return reportLog;

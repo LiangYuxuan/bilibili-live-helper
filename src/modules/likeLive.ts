@@ -10,7 +10,8 @@ export default async (cookies: string): Promise<[boolean, string][]> => {
     try {
         const medals = await getFullMedalList(cookies);
 
-        for (const medal of medals) {
+        for (let i = 0; i < medals.length; i += 1) {
+            const medal = medals[i];
             if (medal.level >= 20) {
                 continue;
             }
@@ -18,7 +19,7 @@ export default async (cookies: string): Promise<[boolean, string][]> => {
             let { roomID } = medal;
             if (roomID < 10000) {
                 let fetchStatus = false;
-                for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j += 1) {
                     try {
                         const roomInfo = await getRoomInfo(cookies, roomID);
                         roomID = roomInfo.room_id;
@@ -37,7 +38,7 @@ export default async (cookies: string): Promise<[boolean, string][]> => {
                 }
             }
 
-            for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j += 1) {
                 try {
                     logger.debug('Send like to Room %d (%d) (%s)', roomID, medal.roomID, medal.targetName);
 
@@ -62,7 +63,6 @@ export default async (cookies: string): Promise<[boolean, string][]> => {
     } catch (error) {
         logger.error(error);
         reportLog.push([false, '直播间点赞失败']);
-        throw reportLog;
     }
 
     return reportLog;

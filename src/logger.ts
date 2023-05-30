@@ -15,6 +15,7 @@ export default winston.createLogger({
             level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
             format: winston.format.combine(
                 winston.format((info) => {
+                    // eslint-disable-next-line no-param-reassign
                     info.level = info.level.toUpperCase();
                     return info;
                 })(),

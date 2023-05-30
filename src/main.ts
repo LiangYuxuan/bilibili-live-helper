@@ -82,11 +82,12 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
     ];
 
     let isAllSuccess = true;
-    for (const [cast, name, module] of castTable) {
+    for (let i = 0; i < castTable.length; i += 1) {
+        const [cast, name, module] = castTable[i];
         if (cast) {
-            for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j += 1) {
                 try {
-                    reportLog.push(...await module(cookies, {
+                    const log = await module(cookies, {
                         uid,
                         medals,
                         useCouponMode: config.useCouponMode,
@@ -97,16 +98,19 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
                         roomIDs: config.roomIDs,
                         sendGiftType: config.sendGiftType,
                         sendGiftTime: config.sendGiftTime,
-                    }));
-                    break;
+                    });
+
+                    const isSuccess = log[log.length - 1][0];
+                    isAllSuccess &&= isSuccess;
+                    reportLog.push(...log);
+
+                    if (isSuccess) {
+                        break;
+                    }
                 } catch (error) {
                     isAllSuccess = false;
-                    if (error instanceof Array) {
-                        reportLog.push(...error);
-                    } else {
-                        logger.error(error);
-                        reportLog.push([false, `${name}失败: ${(error as Error).message}`]);
-                    }
+                    logger.error(error);
+                    reportLog.push([false, `${name}失败: ${(error as Error).message}`]);
                 }
             }
         }

@@ -62,7 +62,7 @@ export const getFullMedalList = async (cookies: string): Promise<Medal[]> => {
     let result = handleMedalList(firstPage.items);
 
     const allPages: Promise<MedalList>[] = [];
-    for (let i = 2; i <= length; ++i) {
+    for (let i = 2; i <= length; i += 1) {
         allPages.push(getMedalList(cookies, i));
     }
     (await Promise.all(allPages)).forEach((value) => {

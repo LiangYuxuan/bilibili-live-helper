@@ -11,7 +11,6 @@ export default async (cookies: string): Promise<[boolean, string][]> => {
     } catch (error) {
         logger.error(error);
         reportLog.push([false, `主站签到失败: ${(error as Error).message}`]);
-        throw reportLog;
     }
 
     return reportLog;

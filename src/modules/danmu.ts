@@ -6,7 +6,10 @@ import {
 } from '../api.js';
 import { Medal } from '../utils.js';
 
-export default async (cookies: string, { medals, danmuList }: { medals: Medal[], danmuList: string[] }): Promise<[boolean, string][]> => {
+export default async (
+    cookies: string,
+    { medals, danmuList }: { medals: Medal[], danmuList: string[] },
+): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
 
     try {
@@ -14,11 +17,12 @@ export default async (cookies: string, { medals, danmuList }: { medals: Medal[],
 
         logger.debug('Weared Medal: %o', wearedMedal);
 
-        for (const medal of medals) {
+        for (let i = 0; i < medals.length; i += 1) {
+            const medal = medals[i];
             let { roomID } = medal;
             if (roomID < 10000) {
                 let fetchStatus = false;
-                for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 3; j += 1) {
                     try {
                         const roomInfo = await getRoomInfo(cookies, roomID);
                         roomID = roomInfo.room_id;
@@ -43,7 +47,7 @@ export default async (cookies: string, { medals, danmuList }: { medals: Medal[],
 
             await new Promise((resolve) => setTimeout(resolve, 2000));
 
-            for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j += 1) {
                 try {
                     const danmu = danmuList[Math.floor(Math.random() * danmuList.length)];
 
@@ -80,7 +84,6 @@ export default async (cookies: string, { medals, danmuList }: { medals: Medal[],
     } catch (error) {
         logger.error(error);
         reportLog.push([false, '粉丝勋章弹幕失败']);
-        throw reportLog;
     }
 
     return reportLog;

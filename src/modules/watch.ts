@@ -24,7 +24,6 @@ export default async (cookies: string, { uid }: { uid: number }): Promise<[boole
     } catch (error) {
         logger.error(error);
         reportLog.push([false, `主站观看视频失败: ${(error as Error).message}`]);
-        throw reportLog;
     }
 
     return reportLog;

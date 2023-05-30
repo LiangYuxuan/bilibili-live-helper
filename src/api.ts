@@ -311,7 +311,10 @@ interface ElectricMonthData {
     special_day: number;
 }
 
-export const getElectricMonth = async (cookies: string, mid: number): Promise<ElectricMonthData> => {
+export const getElectricMonth = async (
+    cookies: string,
+    mid: number,
+): Promise<ElectricMonthData> => {
     const result: APIReturn = await got.get('https://api.bilibili.com/x/ugcpay-rank/elec/month/up', {
         headers: {
             'User-Agent': UserAgent,
@@ -436,9 +439,9 @@ export const createOrder = async (
     pay_bp: number,
     common_bp: number,
     ios_bp: number,
+    goods_num: number,
     goods_type = 2,
     goods_id = 1,
-    goods_num: number,
     context_type = 11,
     context_id = 1,
     platform = 'pc',
@@ -750,7 +753,11 @@ export interface DynamicCard {
     videos: number;
 }
 
-export const getNewDynamic = async (cookies: string, uid: number, type = 8): Promise<DynamicData> => {
+export const getNewDynamic = async (
+    cookies: string,
+    uid: number,
+    type = 8,
+): Promise<DynamicData> => {
     const result: APIReturn = await got.get('https://api.live.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new', {
         headers: {
             'User-Agent': UserAgent,
@@ -813,7 +820,11 @@ export interface MedalList {
     items: FansMedal[];
 }
 
-export const getMedalList = async (cookies: string, page = 1, page_size = 10): Promise<MedalList> => {
+export const getMedalList = async (
+    cookies: string,
+    page = 1,
+    page_size = 10,
+): Promise<MedalList> => {
     const result: APIReturn = await got.get('https://api.live.bilibili.com/xlive/app-ucenter/v1/user/GetMyMedals', {
         headers: {
             'User-Agent': UserAgent,
@@ -867,7 +878,11 @@ interface GroupSignInfo {
     _gt_: number;
 }
 
-export const doGroupSign = async (cookies: string, group_id: number, owner_id: number): Promise<GroupSignInfo> => {
+export const doGroupSign = async (
+    cookies: string,
+    group_id: number,
+    owner_id: number,
+): Promise<GroupSignInfo> => {
     const result: APIReturn = await got.get('https://api.live.bilibili.com/link_setting/v1/link_setting/sign_in', {
         headers: {
             'User-Agent': UserAgent,
@@ -968,7 +983,7 @@ export const getWearedMedal = async (cookies: string): Promise<WearedMedal | und
     assert(result.code === 0, result.message);
 
     if (result.data instanceof Array) {
-        return;
+        return undefined;
     }
 
     return result.data as WearedMedal;
@@ -1436,7 +1451,12 @@ export const trigerInteract = async (cookies: string, roomid: number): Promise<v
     assert(result.code === 0, result.message);
 };
 
-export const likeInteract = async (cookies: string, roomid: number, uid: number, ts: number): Promise<void> => {
+export const likeInteract = async (
+    cookies: string,
+    roomid: number,
+    uid: number,
+    ts: number,
+): Promise<void> => {
     const csrf = extractCSRF(cookies);
 
     assert(csrf !== undefined, '获取CSRF值失败');

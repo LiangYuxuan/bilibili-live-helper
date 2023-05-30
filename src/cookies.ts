@@ -1,4 +1,4 @@
-/* eslint-disable camelcase */
+/* eslint-disable @typescript-eslint/naming-convention */
 
 import assert from 'assert';
 import fs from 'fs';
@@ -125,7 +125,7 @@ const checkLogin = async (oauthKey: string) => {
         const match = text.match(/LIVE_BUVID=([^;]+)/);
 
         if (match) {
-            LIVE_BUVID = match[1];
+            [LIVE_BUVID] = match;
         }
     });
 

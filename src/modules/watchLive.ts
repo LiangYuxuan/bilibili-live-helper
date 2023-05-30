@@ -40,6 +40,7 @@ const calcHeartbeatHMAC = (
     let result = JSON.stringify(data);
 
     /* eslint-disable new-cap */
+    // eslint-disable-next-line no-restricted-syntax
     for (const rule of rules) {
         if (rule === 0) {
             result = CryptoJS.HmacMD5(result, key).toString(CryptoJS.enc.Hex);
@@ -60,14 +61,21 @@ const calcHeartbeatHMAC = (
     return result;
 };
 
-const roomHeartbeat = async (cookies: string, buvid: string, originRoomID: number, targetID: number): Promise<void> => {
+const roomHeartbeat = async (
+    cookies: string,
+    buvid: string,
+    originRoomID: number,
+    targetID: number,
+): Promise<void> => {
     const roomInfo = await getRoomInfo(cookies, originRoomID);
     const roomID = roomInfo.room_id;
     const parentAreaID = roomInfo.parent_area_id;
     const areaID = roomInfo.area_id;
 
     const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (t) => {
+        // eslint-disable-next-line no-bitwise
         const e = 16 * Math.random() | 0;
+        // eslint-disable-next-line no-bitwise, no-mixed-operators
         return (t === 'x' ? e : 3 & e | 8).toString(16);
     });
     let sequence = 0;
@@ -90,6 +98,7 @@ const roomHeartbeat = async (cookies: string, buvid: string, originRoomID: numbe
     let key = result.secret_key;
     let rules = result.secret_rule;
     while (duration < 65 * 60) { // 65 minutes
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
         await new Promise((resolve) => setTimeout(resolve, nextTime * 1000));
         duration += nextTime;
 
@@ -109,7 +118,7 @@ const roomHeartbeat = async (cookies: string, buvid: string, originRoomID: numbe
         );
 
         logger.debug('In Room Heartbeat in %d (%d) (%d) +%ds', originRoomID, roomID, sequence, duration);
-        const result = await inRoomHeartbeat(
+        const res = await inRoomHeartbeat(
             cookies,
             hmac,
             JSON.stringify([parentAreaID, areaID, sequence, roomID]),
@@ -122,10 +131,10 @@ const roomHeartbeat = async (cookies: string, buvid: string, originRoomID: numbe
         );
 
         sequence += 1;
-        nextTime = result.heartbeat_interval;
-        timestamp = result.timestamp;
-        key = result.secret_key;
-        rules = result.secret_rule;
+        nextTime = res.heartbeat_interval;
+        timestamp = res.timestamp;
+        key = res.secret_key;
+        rules = res.secret_rule;
     }
 };
 
@@ -137,7 +146,7 @@ const safeRoomHeartbeat = async (
     targetID: number,
     targetName: string,
 ): Promise<void> => {
-    for (let i = 0; i < 3; i++) {
+    for (let i = 0; i < 3; i += 1) {
         try {
             logger.info('开始观看直播间 %s (%d)', targetName, originRoomID);
             reportLog.push([true, util.format('开始观看直播间 %s (%d)', targetName, originRoomID)]);
@@ -158,7 +167,10 @@ const safeRoomHeartbeat = async (
     }
 };
 
-export default async (cookies: string, { medals }: { medals: Medal[] }): Promise<[boolean, string][]> => {
+export default async (
+    cookies: string,
+    { medals }: { medals: Medal[] },
+): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
 
     const buvid = extractBUVID(cookies);
@@ -166,7 +178,8 @@ export default async (cookies: string, { medals }: { medals: Medal[] }): Promise
     assert(buvid !== undefined, '获取LIVE_BUVID值失败');
 
     const allRooms = [];
-    for (const medal of medals) {
+    for (let i = 0; i < medals.length; i += 1) {
+        const medal = medals[i];
         if (medal.level >= 20) {
             continue;
         }
@@ -192,7 +205,6 @@ export default async (cookies: string, { medals }: { medals: Medal[] }): Promise
     } catch (error) {
         logger.error(error);
         reportLog.push([false, '直播间观看失败']);
-        throw reportLog;
     }
 
     return reportLog;

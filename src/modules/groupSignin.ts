@@ -4,7 +4,10 @@ import logger from '../logger.js';
 import { getGroupList, doGroupSign } from '../api.js';
 import { Medal } from '../utils.js';
 
-export default async (cookies: string, { uid, medals }: { uid: number, medals: Medal[] }): Promise<[boolean, string][]> => {
+export default async (
+    cookies: string,
+    { uid, medals }: { uid: number, medals: Medal[] },
+): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
 
     try {
@@ -14,18 +17,19 @@ export default async (cookies: string, { uid, medals }: { uid: number, medals: M
                 return false;
             }
 
-            for (const medal of medals) {
-                if (medal.targetID === value.owner_uid) {
-                    // 不给20或40级粉丝牌的应援团签到
-                    return medal.level !== 20 && medal.level !== 40;
-                }
+            const medal = medals.filter((item) => item.targetID === value.owner_uid)[0];
+            if (medal && medal.level < 20) {
+                // 给20级以下粉丝牌的应援团签到
+                return true;
             }
+
+            return false;
         });
 
         logger.debug('Filtered Group: %o', groups);
 
         await Promise.all(groups.map(async (value) => {
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 3; i += 1) {
                 try {
                     const result = await doGroupSign(cookies, value.group_id, value.owner_uid);
                     logger.info(
@@ -51,7 +55,6 @@ export default async (cookies: string, { uid, medals }: { uid: number, medals: M
     } catch (error) {
         logger.error(error);
         reportLog.push([false, '应援团签到失败']);
-        throw reportLog;
     }
 
     return reportLog;

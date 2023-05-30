@@ -26,7 +26,7 @@ export default async (cookies: string, {
             (value) => value.couponBalance > 0 && value.couponDueTime > today.getTime()
                 && value.couponDueTime - today.getTime() < useCouponTime * 24 * 60 * 60 * 1000,
         )
-        .reduce((prev, curr) => prev + curr.couponBalance, 0);
+        .reduce((total, curr) => total + curr.couponBalance, 0);
 
     if (balance === 0) {
         logger.info('目前没有即将过期的B币卷。');
@@ -59,8 +59,6 @@ export default async (cookies: string, {
                 balance * 1000,
                 balance * 1000,
                 0,
-                undefined,
-                undefined,
                 balance,
             );
 

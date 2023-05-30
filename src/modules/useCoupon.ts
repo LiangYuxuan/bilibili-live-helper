@@ -1,28 +1,30 @@
 import util from 'util';
 
 import logger from '../logger.js';
-import {getUserCoupon, doElectricPay, sendElectricMessage, createOrder, getElectricMonth} from './../api.js';
+import {
+    getUserCoupon, doElectricPay, sendElectricMessage, createOrder, getElectricMonth,
+} from '../api.js';
 
-export default async (
-    cookies: string, {uid, useCouponMode, useCouponTime, useCouponRest, chargeMsg}:
-        {
-            uid: number, useCouponMode: number, useCouponTime: number,
-            useCouponRest: boolean, chargeMsg: string
-        },
-): Promise<[boolean, string][]> => {
+export default async (cookies: string, {
+    uid, useCouponMode, useCouponTime, useCouponRest, chargeMsg,
+}:
+{
+    uid: number, useCouponMode: number, useCouponTime: number,
+    useCouponRest: boolean, chargeMsg: string
+}): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
 
     const today = new Date();
     const prev = new Date(today.getTime() - 31 * 24 * 60 * 60 * 1000);
 
-    const todayText = today.toISOString().slice(0, 10) + ' 23:59:59';
-    const prevText = prev.toISOString().slice(0, 10) + ' 00:00:00';
+    const todayText = `${today.toISOString().slice(0, 10)} 23:59:59`;
+    const prevText = `${prev.toISOString().slice(0, 10)} 00:00:00`;
 
     const coupons = await getUserCoupon(cookies, prevText, todayText, today.getTime());
     const balance = coupons.result
         .filter(
-            (value) => value.couponBalance > 0 && value.couponDueTime > today.getTime() &&
-                value.couponDueTime - today.getTime() < useCouponTime * 24 * 60 * 60 * 1000,
+            (value) => value.couponBalance > 0 && value.couponDueTime > today.getTime()
+                && value.couponDueTime - today.getTime() < useCouponTime * 24 * 60 * 60 * 1000,
         )
         .reduce((prev, curr) => prev + curr.couponBalance, 0);
 
@@ -48,13 +50,18 @@ export default async (
                 reportLog.push([true, util.format('使用B币卷成功: 为自己充电%d个B币成功。', balance)]);
             }
         } else if (
-            useCouponMode === 2 ||
-            (useCouponMode === 1 && useCouponRest && balance < 2)
+            useCouponMode === 2
+            || (useCouponMode === 1 && useCouponRest && balance < 2)
         ) {
             // use for battery
             await createOrder(
-                cookies, balance * 1000, balance * 1000, 0,
-                undefined, undefined, balance,
+                cookies,
+                balance * 1000,
+                balance * 1000,
+                0,
+                undefined,
+                undefined,
+                balance,
             );
 
             logger.info('使用B币卷成功: 为自己兑换%d个B币(%d个电池)成功。', balance, balance * 10);

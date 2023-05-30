@@ -21,7 +21,7 @@ const getLoginUrl = async () => {
     const result: LoginUrlData = await got.get('https://passport.bilibili.com/qrcode/getLoginUrl', {
         headers: {
             'User-Agent': UserAgent,
-            'Referer': 'https://passport.bilibili.com/',
+            Referer: 'https://passport.bilibili.com/',
         },
     }).json();
 
@@ -44,7 +44,7 @@ const getLoginInfo = async (oauthKey: string) => {
     const result: LoginInfoData = await got.post('https://passport.bilibili.com/qrcode/getLoginInfo', {
         headers: {
             'User-Agent': UserAgent,
-            'Referer': 'https://passport.bilibili.com/',
+            Referer: 'https://passport.bilibili.com/',
         },
         form: {
             oauthKey,
@@ -58,7 +58,7 @@ const checkLogin = async (oauthKey: string) => {
     const startTime = Date.now();
 
     while (Date.now() - startTime < 180 * 1000) {
-        const {status, data} = await getLoginInfo(oauthKey);
+        const { status, data } = await getLoginInfo(oauthKey);
 
         if (status && typeof data === 'object') {
             return data.url;
@@ -71,7 +71,7 @@ const checkLogin = async (oauthKey: string) => {
 };
 
 (async () => {
-    const {url: qrcodeContent, oauthKey} = await getLoginUrl();
+    const { url: qrcodeContent, oauthKey } = await getLoginUrl();
 
     qrcode.generate(qrcodeContent, {
         small: true,
@@ -84,7 +84,7 @@ const checkLogin = async (oauthKey: string) => {
     await got.get(url, {
         headers: {
             'User-Agent': UserAgent,
-            'Referer': 'https://passport.bilibili.com/',
+            Referer: 'https://passport.bilibili.com/',
         },
     });
 
@@ -110,8 +110,8 @@ const checkLogin = async (oauthKey: string) => {
     const request = await got.get('https://api.live.bilibili.com/gift/v3/live/gift_config', {
         headers: {
             'User-Agent': UserAgent,
-            'Referer': 'https://live.bilibili.com/',
-            'Cookie': cookies,
+            Referer: 'https://live.bilibili.com/',
+            Cookie: cookies,
         },
     });
 

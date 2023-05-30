@@ -1,8 +1,8 @@
 import util from 'util';
 
 import logger from '../logger.js';
-import {getRoomInfo, likeInteract} from './../api.js';
-import {getFullMedalList} from './../utils.js';
+import { getRoomInfo, likeInteract } from '../api.js';
+import { getFullMedalList } from '../utils.js';
 
 export default async (cookies: string): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
@@ -15,7 +15,7 @@ export default async (cookies: string): Promise<[boolean, string][]> => {
                 continue;
             }
 
-            let roomID = medal.roomID;
+            let { roomID } = medal;
             if (roomID < 10000) {
                 let fetchStatus = false;
                 for (let i = 0; i < 3; i++) {

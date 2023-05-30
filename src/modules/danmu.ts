@@ -1,12 +1,12 @@
 import util from 'util';
 
 import logger from '../logger.js';
-import {getWearedMedal, wearMedal, takeOffMedal, getRoomInfo, sendDanmu} from './../api.js';
-import {Medal} from './../utils.js';
+import {
+    getWearedMedal, wearMedal, takeOffMedal, getRoomInfo, sendDanmu,
+} from '../api.js';
+import { Medal } from '../utils.js';
 
-export default async (
-    cookies: string, {medals, danmuList}: {medals: Medal[], danmuList: string[]},
-): Promise<[boolean, string][]> => {
+export default async (cookies: string, { medals, danmuList }: { medals: Medal[], danmuList: string[] }): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
 
     try {
@@ -15,7 +15,7 @@ export default async (
         logger.debug('Weared Medal: %o', wearedMedal);
 
         for (const medal of medals) {
-            let roomID = medal.roomID;
+            let { roomID } = medal;
             if (roomID < 10000) {
                 let fetchStatus = false;
                 for (let i = 0; i < 3; i++) {
@@ -51,8 +51,8 @@ export default async (
 
                     await sendDanmu(cookies, danmu, roomID);
 
-                    const logText = '粉丝勋章%s (%s) 打卡成功: ' +
-                        (medal.level > 20 ? '粉丝勋章已点亮' : '粉丝勋章已点亮 (亲密度+100)');
+                    const logText = `粉丝勋章%s (%s) 打卡成功: ${
+                        medal.level > 20 ? '粉丝勋章已点亮' : '粉丝勋章已点亮 (亲密度+100)'}`;
                     logger.info(logText, medal.medalName, medal.targetName);
                     reportLog.push([true, util.format(logText, medal.medalName, medal.targetName)]);
 

@@ -5,7 +5,7 @@ import cron from 'node-cron';
 
 import logger from './logger.js';
 import main from './main.js';
-import {pushToPushDeer} from './push.js';
+import { pushToPushDeer } from './push.js';
 
 dotenv.config();
 
@@ -39,7 +39,7 @@ const cronExp = process.env.CRON_EXP ?? '';
 let cookies = process.env.COOKIES?.trim() ?? '';
 if (cookies.length === 0) {
     try {
-        cookies = fs.readFileSync(path.resolve(process.cwd(), '.cookies'), {encoding: 'utf-8'}).trim();
+        cookies = fs.readFileSync(path.resolve(process.cwd(), '.cookies'), { encoding: 'utf-8' }).trim();
     } catch (error) {
         logger.crit('载入.cookies文件失败: %o', error);
         process.exit(-1);
@@ -63,11 +63,9 @@ const mainHandler = async () => {
     }
 
     if (pushKey.length > 0) {
-        const status = isAllSuccess && (reportLog.reduce(
-            (prev, [success]) => prev >= 3 ? 3 : (success ? 0 : prev + 1), 0,
-        ) < 3);
+        const status = isAllSuccess && (reportLog.reduce((prev, [success]) => (prev >= 3 ? 3 : (success ? 0 : prev + 1)), 0) < 3);
         const reportText = reportLog.map((value) => `${value[0] ? '✅' : '❌'}${value[1]}`).join('\n\n');
-        await pushToPushDeer(pushKey, '# ' + (status ? '✅B站直播日常成功' : '❌B站直播日常失败'), reportText);
+        await pushToPushDeer(pushKey, `# ${status ? '✅B站直播日常成功' : '❌B站直播日常失败'}`, reportText);
     } else {
         logger.warn('未设定PushKey');
     }

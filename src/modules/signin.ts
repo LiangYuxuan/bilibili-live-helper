@@ -1,7 +1,7 @@
 import util from 'util';
 
 import logger from '../logger.js';
-import {doLiveDailySign} from './../api.js';
+import { doLiveDailySign } from '../api.js';
 
 export default async (cookies: string): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];

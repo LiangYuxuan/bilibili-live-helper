@@ -1,5 +1,5 @@
 import logger from '../logger.js';
-import {getNavInfo, getPrivilege, receivePrivilege} from './../api.js';
+import { getNavInfo, getPrivilege, receivePrivilege } from '../api.js';
 
 export default async (
     cookies: string,

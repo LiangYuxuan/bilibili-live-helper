@@ -1,5 +1,5 @@
-import logger from './../logger.js';
-import {reportVideoClick} from './../api.js';
+import logger from '../logger.js';
+import { reportVideoClick } from '../api.js';
 
 export default async (cookies: string): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];

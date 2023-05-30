@@ -1,6 +1,6 @@
 import logger from './logger.js';
-import {getUserInfo} from './api.js';
-import {getFullMedalList, Medal} from './utils.js';
+import { getUserInfo } from './api.js';
+import { getFullMedalList, Medal } from './utils.js';
 
 import login from './modules/login.js';
 import watch from './modules/watch.js';
@@ -47,12 +47,14 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
     logger.debug('UserInfo: %o', userInfo);
     logger.debug('Medals: %o', medals);
 
-    const uid = userInfo.uid;
+    const { uid } = userInfo;
     const reportLog: [boolean, string][] = [];
 
     const castTable: [
         boolean, string, (
-            cookies: string, {uid, medals, danmuList, roomIDs, sendGiftType, sendGiftTime}: {
+            cookies: string, {
+                uid, medals, danmuList, roomIDs, sendGiftType, sendGiftTime,
+            }: {
                 uid: number,
                 medals: Medal[],
                 useCouponMode: number,
@@ -62,8 +64,8 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
                 danmuList: string[],
                 roomIDs: number[],
                 sendGiftType: number[],
-                sendGiftTime: number},
-        ) => Promise<[boolean, string][]>
+                sendGiftTime: number },
+        ) => Promise<[boolean, string][]>,
     ][] = [
         [config.login, '主站签到', login],
         [config.watchVideo, '主站观看视频', watch],
@@ -85,8 +87,8 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
             for (let i = 0; i < 3; i++) {
                 try {
                     reportLog.push(...await module(cookies, {
-                        uid: uid,
-                        medals: medals,
+                        uid,
+                        medals,
                         useCouponMode: config.useCouponMode,
                         useCouponTime: config.useCouponTime,
                         useCouponRest: config.useCouponRest,

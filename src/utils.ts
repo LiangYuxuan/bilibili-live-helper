@@ -1,4 +1,4 @@
-import {getMedalList, MedalList, FansMedal} from './api.js';
+import { getMedalList, MedalList, FansMedal } from './api.js';
 
 export interface Medal {
     targetID: number;
@@ -83,7 +83,7 @@ export const showMedalStatus = async (cookies: string) => {
     console.log('Name\tLevel\tCurrent\tTotal\tToday\tRemain');
     medals.forEach((value) => {
         const name = value.medalName;
-        const level = value.level;
+        const { level } = value;
         const current = value.intimacy;
         const next = value.nextIntimacy;
         const today = value.todayIntimacy;

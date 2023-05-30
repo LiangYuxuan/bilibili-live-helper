@@ -4,8 +4,8 @@ import util from 'util';
 import CryptoJS from 'crypto-js';
 
 import logger from '../logger.js';
-import {getRoomInfo, enterRoomHeartbeat, inRoomHeartbeat} from './../api.js';
-import {Medal} from './../utils.js';
+import { getRoomInfo, enterRoomHeartbeat, inRoomHeartbeat } from '../api.js';
+import { Medal } from '../utils.js';
 
 const extractBUVID = (cookies: string): string | undefined => {
     const target = cookies.split(';').filter((value) => /^\s*LIVE_BUVID=/.test(value));
@@ -13,10 +13,17 @@ const extractBUVID = (cookies: string): string | undefined => {
 };
 
 const calcHeartbeatHMAC = (
-    key: string, rules: number[],
-    parentAreaID: number, areaID: number, sequence: number, roomID: number,
-    buvid: string, uuid: string,
-    ets: number, time: number, ts: number,
+    key: string,
+    rules: number[],
+    parentAreaID: number,
+    areaID: number,
+    sequence: number,
+    roomID: number,
+    buvid: string,
+    uuid: string,
+    ets: number,
+    time: number,
+    ts: number,
 ): string => {
     const data = {
         platform: 'web',
@@ -24,11 +31,11 @@ const calcHeartbeatHMAC = (
         area_id: areaID,
         seq_id: sequence,
         room_id: roomID,
-        buvid: buvid,
-        uuid: uuid,
-        ets: ets,
-        time: time,
-        ts: ts,
+        buvid,
+        uuid,
+        ets,
+        time,
+        ts,
     };
     let result = JSON.stringify(data);
 
@@ -53,9 +60,7 @@ const calcHeartbeatHMAC = (
     return result;
 };
 
-const roomHeartbeat = async (
-    cookies: string, buvid: string, originRoomID: number, targetID: number,
-): Promise<void> => {
+const roomHeartbeat = async (cookies: string, buvid: string, originRoomID: number, targetID: number): Promise<void> => {
     const roomInfo = await getRoomInfo(cookies, originRoomID);
     const roomID = roomInfo.room_id;
     const parentAreaID = roomInfo.parent_area_id;
@@ -63,20 +68,25 @@ const roomHeartbeat = async (
 
     const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (t) => {
         const e = 16 * Math.random() | 0;
-        return ('x' === t ? e : 3 & e | 8).toString(16);
+        return (t === 'x' ? e : 3 & e | 8).toString(16);
     });
     let sequence = 0;
 
     logger.debug('Enter Room Heartbeat in %d (%d)', originRoomID, roomID);
     const result = await enterRoomHeartbeat(
-        cookies, JSON.stringify([parentAreaID, areaID, sequence, roomID]),
-        JSON.stringify([buvid, uuid]), targetID, Date.now(), 0, JSON.stringify([]),
+        cookies,
+        JSON.stringify([parentAreaID, areaID, sequence, roomID]),
+        JSON.stringify([buvid, uuid]),
+        targetID,
+        Date.now(),
+        0,
+        JSON.stringify([]),
     );
     sequence += 1;
 
     let duration = 0;
     let nextTime = result.heartbeat_interval;
-    let timestamp = result.timestamp;
+    let { timestamp } = result;
     let key = result.secret_key;
     let rules = result.secret_rule;
     while (duration < 65 * 60) { // 65 minutes
@@ -85,14 +95,30 @@ const roomHeartbeat = async (
 
         const now = Date.now();
         const hmac = calcHeartbeatHMAC(
-            key, rules, parentAreaID, areaID, sequence, roomID,
-            buvid, uuid, timestamp, nextTime, now,
+            key,
+            rules,
+            parentAreaID,
+            areaID,
+            sequence,
+            roomID,
+            buvid,
+            uuid,
+            timestamp,
+            nextTime,
+            now,
         );
 
         logger.debug('In Room Heartbeat in %d (%d) (%d) +%ds', originRoomID, roomID, sequence, duration);
         const result = await inRoomHeartbeat(
-            cookies, hmac, JSON.stringify([parentAreaID, areaID, sequence, roomID]),
-            JSON.stringify([buvid, uuid]), targetID, timestamp, key, nextTime, now,
+            cookies,
+            hmac,
+            JSON.stringify([parentAreaID, areaID, sequence, roomID]),
+            JSON.stringify([buvid, uuid]),
+            targetID,
+            timestamp,
+            key,
+            nextTime,
+            now,
         );
 
         sequence += 1;
@@ -104,8 +130,12 @@ const roomHeartbeat = async (
 };
 
 const safeRoomHeartbeat = async (
-    reportLog: [boolean, string][], cookies: string, buvid: string,
-    originRoomID: number, targetID: number, targetName: string,
+    reportLog: [boolean, string][],
+    cookies: string,
+    buvid: string,
+    originRoomID: number,
+    targetID: number,
+    targetName: string,
 ): Promise<void> => {
     for (let i = 0; i < 3; i++) {
         try {
@@ -128,9 +158,7 @@ const safeRoomHeartbeat = async (
     }
 };
 
-export default async (
-    cookies: string, {medals}: {medals: Medal[]},
-): Promise<[boolean, string][]> => {
+export default async (cookies: string, { medals }: { medals: Medal[] }): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
 
     const buvid = extractBUVID(cookies);
@@ -145,8 +173,12 @@ export default async (
 
         allRooms.push(
             safeRoomHeartbeat(
-                reportLog, cookies, buvid,
-                medal.roomID, medal.targetID, medal.targetName,
+                reportLog,
+                cookies,
+                buvid,
+                medal.roomID,
+                medal.targetID,
+                medal.targetName,
             ),
         );
 

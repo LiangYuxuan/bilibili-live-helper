@@ -1,12 +1,10 @@
 import util from 'util';
 
 import logger from '../logger.js';
-import {getGroupList, doGroupSign} from './../api.js';
-import {Medal} from './../utils.js';
+import { getGroupList, doGroupSign } from '../api.js';
+import { Medal } from '../utils.js';
 
-export default async (
-    cookies: string, {uid, medals}: {uid: number, medals: Medal[]},
-): Promise<[boolean, string][]> => {
+export default async (cookies: string, { uid, medals }: { uid: number, medals: Medal[] }): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
 
     try {
@@ -43,9 +41,7 @@ export default async (
                     break;
                 } catch (error) {
                     logger.error('应援团(%s)签到失败: %s', value.fans_medal_name, (error as Error).message);
-                    reportLog.push([false, util.format(
-                        '应援团(%s)签到失败: %s', value.fans_medal_name, (error as Error).message,
-                    )]);
+                    reportLog.push([false, util.format('应援团(%s)签到失败: %s', value.fans_medal_name, (error as Error).message)]);
                 }
             }
         }));

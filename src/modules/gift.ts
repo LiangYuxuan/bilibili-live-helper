@@ -1,13 +1,15 @@
 import util from 'util';
 
 import logger from '../logger.js';
-import {getGiftBagList, getGiftConfig, doRoomInit, sendGiftBag} from './../api.js';
-import {getFullMedalList} from './../utils.js';
+import {
+    getGiftBagList, getGiftConfig, doRoomInit, sendGiftBag,
+} from '../api.js';
+import { getFullMedalList } from '../utils.js';
 
-export default async (
-    cookies: string, {uid, roomIDs, sendGiftType, sendGiftTime}:
-        {uid: number, roomIDs: number[], sendGiftType: number[], sendGiftTime: number},
-): Promise<[boolean, string][]> => {
+export default async (cookies: string, {
+    uid, roomIDs, sendGiftType, sendGiftTime,
+}:
+{ uid: number, roomIDs: number[], sendGiftType: number[], sendGiftTime: number }): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
 
     try {
@@ -22,12 +24,10 @@ export default async (
             giftInfo.forEach((value) => values.set(value.id, Math.ceil(value.price / 100)));
             values.set(30607, 50);
 
-            const pending = gifts.list.filter((value) => {
-                return (
-                    sendGiftType.includes(value.gift_id) &&
-                    value.expire_at - gifts.time < 60 * 60 * 24 * sendGiftTime
-                );
-            }).sort((left, right) => {
+            const pending = gifts.list.filter((value) => (
+                sendGiftType.includes(value.gift_id)
+                    && value.expire_at - gifts.time < 60 * 60 * 24 * sendGiftTime
+            )).sort((left, right) => {
                 if (left.expire_at !== right.expire_at) {
                     return left.expire_at - right.expire_at;
                 }
@@ -68,13 +68,23 @@ export default async (
 
                     logger.debug(
                         'Send Gift %s (%d) %d/%d to %s',
-                        gift.gift_name, gift.gift_id, sendNum, gift.gift_num, medal.medalName,
+                        gift.gift_name,
+                        gift.gift_id,
+                        sendNum,
+                        gift.gift_num,
+                        medal.medalName,
                     );
 
                     try {
                         await sendGiftBag(
-                            cookies, uid, gift.gift_id, medal.targetID, sendNum,
-                            gift.bag_id, roomInfo.room_id, Math.round(Date.now() / 1000),
+                            cookies,
+                            uid,
+                            gift.gift_id,
+                            medal.targetID,
+                            sendNum,
+                            gift.bag_id,
+                            roomInfo.room_id,
+                            Math.round(Date.now() / 1000),
                         );
 
                         gift.gift_num -= sendNum;
@@ -82,19 +92,23 @@ export default async (
 
                         logger.info(
                             '向%s送出礼物%sx%d成功: 获得亲密度%d (今日距离上限%d)',
-                            medal.medalName, gift.gift_name, sendNum,
-                            value * sendNum, restIntimacy,
+                            medal.medalName,
+                            gift.gift_name,
+                            sendNum,
+                            value * sendNum,
+                            restIntimacy,
                         );
                         reportLog.push([true, util.format(
                             '向%s送出礼物%sx%d成功: 获得亲密度%d (今日距离上限%d)',
-                            medal.medalName, gift.gift_name, sendNum,
-                            value * sendNum, restIntimacy,
+                            medal.medalName,
+                            gift.gift_name,
+                            sendNum,
+                            value * sendNum,
+                            restIntimacy,
                         )]);
                     } catch (error) {
                         logger.error('向%s送出礼物%sx%d失败', medal.medalName, gift.gift_name, sendNum);
-                        reportLog.push([false, util.format(
-                            '向%s送出礼物%sx%d失败', medal.medalName, gift.gift_name, sendNum,
-                        )]);
+                        reportLog.push([false, util.format('向%s送出礼物%sx%d失败', medal.medalName, gift.gift_name, sendNum)]);
                         throw error;
                     }
                 }

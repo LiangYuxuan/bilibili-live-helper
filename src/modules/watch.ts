@@ -1,9 +1,9 @@
 import util from 'util';
 
 import logger from '../logger.js';
-import {getNewDynamic, DynamicCard, reportVideoHeartbeat} from './../api.js';
+import { getNewDynamic, DynamicCard, reportVideoHeartbeat } from '../api.js';
 
-export default async (cookies: string, {uid}: {uid: number}): Promise<[boolean, string][]> => {
+export default async (cookies: string, { uid }: { uid: number }): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
 
     try {
@@ -13,7 +13,10 @@ export default async (cookies: string, {uid}: {uid: number}): Promise<[boolean, 
         logger.debug('Dynamic Card: %o', firstCard);
 
         await reportVideoHeartbeat(
-            cookies, firstCard.aid, firstCard.cid, uid,
+            cookies,
+            firstCard.aid,
+            firstCard.cid,
+            uid,
             Math.round(Date.now() / 1000),
         );
         logger.info('主站观看视频(aid: %d)成功', firstCard.aid);

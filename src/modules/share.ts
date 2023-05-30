@@ -1,9 +1,9 @@
 import util from 'util';
 
 import logger from '../logger.js';
-import {getNewDynamic, DynamicCard, reportShare} from './../api.js';
+import { getNewDynamic, DynamicCard, reportShare } from '../api.js';
 
-export default async (cookies: string, {uid}: {uid: number}): Promise<[boolean, string][]> => {
+export default async (cookies: string, { uid }: { uid: number }): Promise<[boolean, string][]> => {
     const reportLog: [boolean, string][] = [];
 
     try {

@@ -18,11 +18,13 @@ jobs:
         with:
           node-version: '16'
 
-      - run: npm install
+      - run: corepack enable
 
-      - run: npm run lint
+      - run: pnpm install
 
-      - run: npm run build
+      - run: pnpm lint
+
+      - run: pnpm build
 
       - uses: easingthemes/ssh-deploy@v4.1.8
         with:

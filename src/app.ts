@@ -22,14 +22,14 @@ const config = {
         (process.env.ROOM_ID ?? '').split(',').map((value) => parseInt(value, 10)).filter((value) => !Number.isNaN(value)),
     sendGiftType:
         (process.env.SEND_GIFT_TYPE ?? '').split(',').map((value) => parseInt(value, 10)).filter((value) => !Number.isNaN(value)),
-    sendGiftTime: parseInt(process.env.SEND_GIFT_TIME ?? '', 10) ?? 1,
+    sendGiftTime: Number.isNaN(parseInt(process.env.SEND_GIFT_TIME ?? '', 10)) ? 1 : parseInt(process.env.SEND_GIFT_TIME ?? '', 10),
     likeLive: !!parseInt(process.env.LIKE_LIVE ?? '', 10),
     shareLive: !!parseInt(process.env.SHARE_LIVE ?? '', 10),
     watchLive: !!parseInt(process.env.WATCH_LIVE ?? '', 10),
     getCoupon: !!parseInt(process.env.GET_COUPON ?? '', 10),
     useCoupon: !!parseInt(process.env.USE_COUPON ?? '', 10),
-    useCouponMode: parseInt(process.env.USE_COUPON_MODE ?? '', 10) ?? 1,
-    useCouponTime: parseInt(process.env.USE_COUPON_TIME ?? '', 10) ?? 1,
+    useCouponMode: Number.isNaN(parseInt(process.env.USE_COUPON_MODE ?? '', 10)) ? 1 : parseInt(process.env.USE_COUPON_MODE ?? '', 10),
+    useCouponTime: Number.isNaN(parseInt(process.env.USE_COUPON_TIME ?? '', 10)) ? 1 : parseInt(process.env.USE_COUPON_TIME ?? '', 10),
     useCouponRest: !!parseInt(process.env.USE_COUPON_REST ?? '', 10),
     chargeMsg: process.env.CHARGE_MSG ?? '',
 };
@@ -77,6 +77,7 @@ const mainHandler = async () => {
 };
 
 if (cronExp.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     cron.schedule(cronExp, mainHandler, {
         timezone: 'Asia/Shanghai',
     });
@@ -84,4 +85,5 @@ if (cronExp.length > 0) {
     logger.warn('未设定定时执行表达式');
 }
 
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 mainHandler();

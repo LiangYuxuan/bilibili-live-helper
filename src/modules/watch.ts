@@ -8,7 +8,7 @@ export default async (cookies: string, { uid }: { uid: number }): Promise<[boole
 
     try {
         const dynamics = await getNewDynamic(cookies, uid, 8);
-        const firstCard: DynamicCard = JSON.parse(dynamics.cards[0].card);
+        const firstCard = JSON.parse(dynamics.cards[0].card) as DynamicCard;
 
         logger.debug('Dynamic Card: %o', firstCard);
 

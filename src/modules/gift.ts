@@ -4,7 +4,7 @@ import logger from '../logger.js';
 import {
     getGiftBagList, getGiftConfig, doRoomInit, sendGiftBag,
 } from '../api.js';
-import { getFullMedalList } from '../utils.js';
+import { getFullMedalList, Medal } from '../utils.js';
 
 export default async (cookies: string, {
     uid, roomIDs, sendGiftType, sendGiftTime,
@@ -25,7 +25,7 @@ export default async (cookies: string, {
                 getGiftConfig(cookies),
             ]);
 
-            const values: Map<number, number> = new Map();
+            const values = new Map<number, number>();
             giftInfo.forEach((value) => values.set(value.id, Math.ceil(value.price / 100)));
             values.set(30607, 50);
 
@@ -44,7 +44,8 @@ export default async (cookies: string, {
 
             for (let i = 0; i < roomIDs.length; i += 1) {
                 const roomID = roomIDs[i];
-                const medal = medals.filter((value) => value.roomID === roomID)[0];
+                const medal = medals
+                    .filter((value) => value.roomID === roomID)[0] as Medal | undefined;
                 if (!medal) {
                     logger.error('无法找到房间%d对应的粉丝勋章', roomID);
                     reportLog.push([false, util.format('无法找到房间%d对应的粉丝勋章', roomID)]);

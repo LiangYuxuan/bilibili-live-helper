@@ -17,7 +17,8 @@ export default async (
                 return false;
             }
 
-            const medal = medals.filter((item) => item.targetID === value.owner_uid)[0];
+            const medal = medals
+                .filter((item) => item.targetID === value.owner_uid)[0] as Medal | undefined;
             if (medal && medal.level < 20) {
                 // 给20级以下粉丝牌的应援团签到
                 return true;

@@ -24,7 +24,7 @@
     "winston": "^3.10.0"
   },
   "devDependencies": {
-    "@types/crypto-js": "^4.1.1",
+    "@types/crypto-js": "^4.1.2",
     "@types/node": "^20.5.9",
     "@types/node-cron": "^3.0.8",
     "@types/qrcode-terminal": "^0.12.0",

@@ -26,7 +26,7 @@ jobs:
 
       - run: pnpm build
 
-      - uses: easingthemes/ssh-deploy@v4.1.8
+      - uses: easingthemes/ssh-deploy@v4.1.9
         with:
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}

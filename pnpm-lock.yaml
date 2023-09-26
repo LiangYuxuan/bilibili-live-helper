@@ -29,8 +29,8 @@ devDependencies:
     specifier: ^4.1.2
     version: 4.1.2
   '@types/node':
-    specifier: ^20.6.5
-    version: 20.6.5
+    specifier: ^20.7.0
+    version: 20.7.0
   '@types/node-cron':
     specifier: ^3.0.9
     version: 3.0.9
@@ -54,7 +54,7 @@ devDependencies:
     version: 17.1.0(@typescript-eslint/eslint-plugin@6.7.3)(@typescript-eslint/parser@6.7.3)(eslint-plugin-import@2.27.5)(eslint@8.50.0)
   ts-node:
     specifier: ^10.9.1
-    version: 10.9.1(@types/node@20.6.5)(typescript@5.2.2)
+    version: 10.9.1(@types/node@20.7.0)(typescript@5.2.2)
   typescript:
     specifier: ^5.2.2
     version: 5.2.2
@@ -228,8 +228,8 @@ packages:
     resolution: {integrity: sha512-P10Vf+oagnMbefD31nqjS/dpBM34qzfdpvIgVZwtwsNb0Hg2lDaPFeGcyGUJIqh3zHlDMwYXGeunGgMnswgnPg==}
     dev: true
 
-  /@types/node@20.6.5:
-    resolution: {integrity: sha512-2qGq5LAOTh9izcc0+F+dToFigBWiK1phKPt7rNhOqJSr35y8rlIBjDwGtFSgAI6MGIhjwOVNSQZVdJsZJ2uR1w==}
+  /@types/node@20.7.0:
+    resolution: {integrity: sha512-zI22/pJW2wUZOVyguFaUL1HABdmSVxpXrzIqkjsHmyUjNhPoWM1CKfvVuXfetHhIok4RY573cqS0mZ1SJEnoTg==}
     dev: true
 
   /@types/qrcode-terminal@0.12.0:
@@ -1836,7 +1836,7 @@ packages:
       typescript: 5.2.2
     dev: true
 
-  /ts-node@10.9.1(@types/node@20.6.5)(typescript@5.2.2):
+  /ts-node@10.9.1(@types/node@20.7.0)(typescript@5.2.2):
     resolution: {integrity: sha512-NtVysVPkxxrwFGUUxGYhfux8k78pQB3JqYBXlLRZgdGUqTO5wU/UyHop5p70iEbGhB7q5KmiZiU0Y3KlJrScEw==}
     hasBin: true
     peerDependencies:
@@ -1855,7 +1855,7 @@ packages:
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
-      '@types/node': 20.6.5
+      '@types/node': 20.7.0
       acorn: 8.9.0
       acorn-walk: 8.2.0
       arg: 4.1.3

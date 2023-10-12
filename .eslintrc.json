@@ -15,12 +15,7 @@
         "project": true
     },
     "rules": {
-        "no-await-in-loop": "off",
-        "no-continue": "off",
-        "no-promise-executor-return": "off",
-        "no-console": "off",
         "import/extensions": ["error", "ignorePackages"],
-        "@typescript-eslint/indent": ["error", 4],
-        "@typescript-eslint/prefer-for-of": "off"
+        "@typescript-eslint/indent": ["error", 4]
     }
 }

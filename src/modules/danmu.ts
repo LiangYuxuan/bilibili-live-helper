@@ -1,90 +1,64 @@
-import util from 'util';
+import util from 'node:util';
 
-import logger from '../logger.js';
+import logger from '../logger.ts';
 import {
     getWearedMedal, wearMedal, takeOffMedal, getRoomInfo, sendDanmu,
-} from '../api.js';
-import { Medal } from '../utils.js';
+} from '../api.ts';
+import { retry, delay, Medal } from '../utils.ts';
 
 export default async (
     cookies: string,
     { medals, danmuList }: { medals: Medal[], danmuList: string[] },
-): Promise<[boolean, string][]> => {
-    const reportLog: [boolean, string][] = [];
+): Promise<void> => {
+    const wearedMedal = (await getWearedMedal(cookies))?.medal_id;
 
-    try {
-        const wearedMedal = (await getWearedMedal(cookies))?.medal_id;
+    logger.debug(util.format('Weared Medal: %o', wearedMedal));
 
-        logger.debug('Weared Medal: %o', wearedMedal);
-
-        for (let i = 0; i < medals.length; i += 1) {
-            const medal = medals[i];
-            let { roomID } = medal;
-            if (roomID < 10000) {
-                let fetchStatus = false;
-                for (let j = 0; j < 3; j += 1) {
-                    try {
-                        const roomInfo = await getRoomInfo(cookies, roomID);
-                        roomID = roomInfo.room_id;
-                        fetchStatus = true;
-                        break;
-                    } catch (error) {
-                        logger.error('房间%d信息获取失败', medal.roomID);
-                        reportLog.push([false, util.format('房间%d信息获取失败', medal.roomID)]);
-                    }
-                }
-                if (!fetchStatus) {
-                    // failed to get room info, skip this medal
-                    logger.error('跳过徽章%d', medal.medalName);
-                    reportLog.push([false, util.format('跳过徽章%d', medal.medalName)]);
-                    continue;
-                }
-            }
-
-            await wearMedal(cookies, medal.medalID);
-
-            logger.debug('Wear Medal: %o', medal);
-
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-
-            for (let j = 0; j < 3; j += 1) {
-                try {
-                    const danmu = danmuList[Math.floor(Math.random() * danmuList.length)];
-
-                    logger.debug('Send danmu %s to Room %d (%d) (%s)', danmu, roomID, medal.roomID, medal.targetName);
-
-                    await sendDanmu(cookies, danmu, roomID);
-
-                    const logText = `粉丝勋章%s (%s) 打卡成功: ${
-                        medal.level > 20 ? '粉丝勋章已点亮' : '粉丝勋章已点亮 (亲密度+100)'}`;
-                    logger.info(logText, medal.medalName, medal.targetName);
-                    reportLog.push([true, util.format(logText, medal.medalName, medal.targetName)]);
-
-                    break;
-                } catch (error) {
-                    logger.error('粉丝勋章%s (%s) 打卡失败', medal.medalName, medal.targetName);
-                    reportLog.push([false, util.format('粉丝勋章%s (%s) 打卡失败', medal.medalName, medal.targetName)]);
-                    await new Promise((resolve) => setTimeout(resolve, 5000));
-                }
-            }
-
-            await new Promise((resolve) => setTimeout(resolve, 4000));
+    // eslint-disable-next-line no-restricted-syntax
+    for (const medal of medals) {
+        let { roomID } = medal;
+        if (roomID < 10000) {
+            // eslint-disable-next-line no-await-in-loop
+            const roomInfo = await retry(
+                () => getRoomInfo(cookies, roomID),
+                3,
+                1000,
+                `房间${medal.roomID}信息获取成功`,
+                `房间${medal.roomID}信息获取失败`,
+            );
+            roomID = roomInfo.room_id;
         }
 
-        if (wearedMedal) {
-            await wearMedal(cookies, wearedMedal);
-            logger.debug('Restore weared medal %d', wearedMedal);
-        } else {
-            await takeOffMedal(cookies);
-            logger.debug('Take off weared medal');
-        }
+        // eslint-disable-next-line no-await-in-loop
+        await wearMedal(cookies, medal.medalID);
 
-        logger.info('粉丝勋章弹幕成功');
-        reportLog.push([true, '粉丝勋章弹幕成功']);
-    } catch (error) {
-        logger.error(error);
-        reportLog.push([false, '粉丝勋章弹幕失败']);
+        logger.debug(util.format('Wear Medal: %o', medal));
+
+        // eslint-disable-next-line no-await-in-loop
+        await delay(2000);
+
+        const danmu = danmuList[Math.floor(Math.random() * danmuList.length)];
+
+        logger.debug(`Send danmu ${danmu} to Room ${roomID} (${medal.roomID}) (${medal.targetName})`);
+
+        // eslint-disable-next-line no-await-in-loop
+        await retry(
+            () => sendDanmu(cookies, danmu, roomID),
+            3,
+            5000,
+            `粉丝勋章${medal.medalName} (${medal.targetName}) 打卡成功: ${medal.level > 20 ? '粉丝勋章已点亮' : '粉丝勋章已点亮 (亲密度+100)'}`,
+            `粉丝勋章${medal.medalName} (${medal.targetName}) 打卡失败`,
+        );
+
+        // eslint-disable-next-line no-await-in-loop
+        await delay(4000);
     }
 
-    return reportLog;
+    if (wearedMedal) {
+        await wearMedal(cookies, wearedMedal);
+        logger.debug(`Restore weared medal ${wearedMedal}`);
+    } else {
+        await takeOffMedal(cookies);
+        logger.debug('Take off weared medal');
+    }
 };

@@ -1,4 +1,47 @@
-import { getMedalList, MedalList, FansMedal } from './api.js';
+import logger from './logger.ts';
+import { getMedalList, MedalList, FansMedal } from './api.ts';
+
+export const delay = (ms: number): Promise<void> => new Promise((resolve) => {
+    setTimeout(resolve, ms);
+});
+
+export const retry = async <T>(
+    func: () => Promise<T>,
+    times: number,
+    errorDelayMS: number,
+    successMessage: string | ((res: T) => string),
+    errorMessage: string,
+): Promise<T> => {
+    let currentTimes = 0;
+    // eslint-disable-next-line no-constant-condition, @typescript-eslint/no-unnecessary-condition
+    while (true) {
+        try {
+            // eslint-disable-next-line no-await-in-loop
+            const result = await func();
+
+            if (typeof successMessage === 'function') {
+                logger.info(successMessage(result));
+            } else {
+                logger.info(successMessage);
+            }
+
+            return result;
+        } catch (error) {
+            currentTimes += 1;
+            if (currentTimes >= times) {
+                logger.error(`${errorMessage}: ${(error as Error).message}`);
+                throw error;
+            }
+
+            logger.warn(`${errorMessage}: ${(error as Error).message}`);
+
+            if (errorDelayMS > 0) {
+                // eslint-disable-next-line no-await-in-loop
+                await delay(errorDelayMS);
+            }
+        }
+    }
+};
 
 export interface Medal {
     targetID: number;
@@ -70,24 +113,4 @@ export const getFullMedalList = async (cookies: string): Promise<Medal[]> => {
     });
 
     return result;
-};
-
-export const showMedalStatus = async (cookies: string) => {
-    const medals = (await getFullMedalList(cookies)).sort((a, b) => {
-        if (a.level !== b.level) {
-            return a.intimacy - b.intimacy;
-        }
-
-        return a.level - b.level;
-    });
-    console.log('Name\tLevel\tCurrent\tTotal\tToday\tRemain');
-    medals.forEach((value) => {
-        const name = value.medalName;
-        const { level } = value;
-        const current = value.intimacy;
-        const next = value.nextIntimacy;
-        const today = value.todayIntimacy;
-        const remain = Math.ceil((value.nextIntimacy - value.intimacy) / value.todayIntimacy);
-        console.log(`${name}\t${level}\t${current}\t${next}\t+${today}\t${remain} dys`);
-    });
 };

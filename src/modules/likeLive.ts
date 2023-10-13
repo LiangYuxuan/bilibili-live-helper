@@ -1,69 +1,38 @@
-import util from 'util';
+import logger from '../logger.ts';
+import { getRoomInfo, likeInteract } from '../api.ts';
+import { retry, delay, Medal } from '../utils.ts';
 
-import logger from '../logger.js';
-import { getRoomInfo, likeInteract } from '../api.js';
-import { getFullMedalList } from '../utils.js';
-
-export default async (cookies: string): Promise<[boolean, string][]> => {
-    const reportLog: [boolean, string][] = [];
-
-    try {
-        const medals = await getFullMedalList(cookies);
-
-        for (let i = 0; i < medals.length; i += 1) {
-            const medal = medals[i];
-            if (medal.level >= 20) {
-                continue;
-            }
-
-            let { roomID } = medal;
-            if (roomID < 10000) {
-                let fetchStatus = false;
-                for (let j = 0; j < 3; j += 1) {
-                    try {
-                        const roomInfo = await getRoomInfo(cookies, roomID);
-                        roomID = roomInfo.room_id;
-                        fetchStatus = true;
-                        break;
-                    } catch (error) {
-                        logger.error('房间%d信息获取失败', medal.roomID);
-                        reportLog.push([false, util.format('房间%d信息获取失败', medal.roomID)]);
-                    }
-                }
-                if (!fetchStatus) {
-                    // failed to get room info, skip this medal
-                    logger.error('跳过徽章%d', medal.medalName);
-                    reportLog.push([false, util.format('跳过徽章%d', medal.medalName)]);
-                    continue;
-                }
-            }
-
-            for (let j = 0; j < 3; j += 1) {
-                try {
-                    logger.debug('Send like to Room %d (%d) (%s)', roomID, medal.roomID, medal.targetName);
-
-                    await likeInteract(cookies, roomID, medal.targetID, Date.now());
-
-                    logger.info('粉丝勋章%s (%s) 点赞房间成功', medal.medalName, medal.targetName);
-                    reportLog.push([true, util.format('粉丝勋章%s (%s) 点赞房间成功', medal.medalName, medal.targetName)]);
-
-                    break;
-                } catch (error) {
-                    logger.error('粉丝勋章%s (%s) 点赞房间失败', medal.medalName, medal.targetName);
-                    reportLog.push([false, util.format('粉丝勋章%s (%s) 点赞房间失败', medal.medalName, medal.targetName)]);
-                    await new Promise((resolve) => setTimeout(resolve, 5000));
-                }
-            }
-
-            await new Promise((resolve) => setTimeout(resolve, 4000));
+export default async (
+    cookies: string,
+    { medals }: { medals: Medal[] },
+): Promise<void> => {
+    // eslint-disable-next-line no-restricted-syntax
+    for (const medal of medals.filter((value) => value.level < 20)) {
+        let { roomID } = medal;
+        if (roomID < 10000) {
+            // eslint-disable-next-line no-await-in-loop
+            const roomInfo = await retry(
+                () => getRoomInfo(cookies, roomID),
+                3,
+                1000,
+                `房间${medal.roomID}信息获取成功`,
+                `房间${medal.roomID}信息获取失败`,
+            );
+            roomID = roomInfo.room_id;
         }
 
-        logger.info('直播间点赞成功');
-        reportLog.push([true, '直播间点赞成功']);
-    } catch (error) {
-        logger.error(error);
-        reportLog.push([false, '直播间点赞失败']);
-    }
+        logger.debug(`Send like to Room ${roomID} (${medal.roomID}) (${medal.targetName})`);
 
-    return reportLog;
+        // eslint-disable-next-line no-await-in-loop
+        await retry(
+            () => likeInteract(cookies, roomID, medal.targetID, Date.now()),
+            3,
+            5000,
+            `粉丝勋章${medal.medalName} (${medal.targetName}) 点赞房间成功`,
+            `粉丝勋章${medal.medalName} (${medal.targetName}) 点赞房间失败`,
+        );
+
+        // eslint-disable-next-line no-await-in-loop
+        await delay(4000);
+    }
 };

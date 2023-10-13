@@ -1,10 +1,11 @@
-import util from 'util';
+import assert from 'node:assert';
+import util from 'node:util';
 
-import logger from '../logger.js';
+import logger from '../logger.ts';
 import {
     getGiftBagList, getGiftConfig, doRoomInit, sendGiftBag,
-} from '../api.js';
-import { getFullMedalList, Medal } from '../utils.js';
+} from '../api.ts';
+import { getFullMedalList } from '../utils.ts';
 
 export default async (cookies: string, {
     uid, roomIDs, sendGiftType, sendGiftTime,
@@ -14,124 +15,71 @@ export default async (cookies: string, {
     roomIDs: number[],
     sendGiftType: number[],
     sendGiftTime: number,
-}): Promise<[boolean, string][]> => {
-    const reportLog: [boolean, string][] = [];
-
-    try {
-        if (roomIDs.length > 0) {
-            const [medals, gifts, giftInfo] = await Promise.all([
-                getFullMedalList(cookies),
-                getGiftBagList(cookies),
-                getGiftConfig(cookies),
-            ]);
-
-            const values = new Map<number, number>();
-            giftInfo.forEach((value) => values.set(value.id, Math.ceil(value.price / 100)));
-            values.set(30607, 50);
-
-            const pending = gifts.list.filter((value) => (
-                sendGiftType.includes(value.gift_id)
-                    && value.expire_at - gifts.time < 60 * 60 * 24 * sendGiftTime
-            )).sort((left, right) => {
-                if (left.expire_at !== right.expire_at) {
-                    return left.expire_at - right.expire_at;
-                }
-
-                return (values.get(right.gift_id) ?? 0) - (values.get(left.gift_id) ?? 0);
-            });
-
-            logger.debug('Pending Gifts: %o', pending);
-
-            for (let i = 0; i < roomIDs.length; i += 1) {
-                const roomID = roomIDs[i];
-                const medal = medals
-                    .filter((value) => value.roomID === roomID)[0] as Medal | undefined;
-                if (!medal) {
-                    logger.error('无法找到房间%d对应的粉丝勋章', roomID);
-                    reportLog.push([false, util.format('无法找到房间%d对应的粉丝勋章', roomID)]);
-                    continue;
-                }
-
-                let roomInfo;
-                try {
-                    roomInfo = await doRoomInit(cookies, roomID);
-                } catch (error) {
-                    logger.error('房间%d信息获取失败', roomID);
-                    reportLog.push([false, util.format('房间%d信息获取失败', roomID)]);
-                    continue;
-                }
-
-                let restIntimacy = medal.dayLimit - medal.todayIntimacy;
-                logger.debug('%s Daily Intimacy Rest %d', medal.medalName, restIntimacy);
-
-                for (let j = 0; j < pending.length; j += 1) {
-                    const gift = pending[j];
-                    if (gift.gift_num === 0) continue;
-
-                    const value = values.get(gift.gift_id);
-                    if (value === undefined) continue;
-
-                    const sendNum = Math.min(Math.floor(restIntimacy / value), gift.gift_num);
-                    if (sendNum === 0) continue;
-
-                    logger.debug(
-                        'Send Gift %s (%d) %d/%d to %s',
-                        gift.gift_name,
-                        gift.gift_id,
-                        sendNum,
-                        gift.gift_num,
-                        medal.medalName,
-                    );
-
-                    try {
-                        await sendGiftBag(
-                            cookies,
-                            uid,
-                            gift.gift_id,
-                            medal.targetID,
-                            sendNum,
-                            gift.bag_id,
-                            roomInfo.room_id,
-                            Math.round(Date.now() / 1000),
-                        );
-
-                        gift.gift_num -= sendNum;
-                        restIntimacy -= value * sendNum;
-
-                        logger.info(
-                            '向%s送出礼物%sx%d成功: 获得亲密度%d (今日距离上限%d)',
-                            medal.medalName,
-                            gift.gift_name,
-                            sendNum,
-                            value * sendNum,
-                            restIntimacy,
-                        );
-                        reportLog.push([true, util.format(
-                            '向%s送出礼物%sx%d成功: 获得亲密度%d (今日距离上限%d)',
-                            medal.medalName,
-                            gift.gift_name,
-                            sendNum,
-                            value * sendNum,
-                            restIntimacy,
-                        )]);
-                    } catch (error) {
-                        logger.error('向%s送出礼物%sx%d失败', medal.medalName, gift.gift_name, sendNum);
-                        reportLog.push([false, util.format('向%s送出礼物%sx%d失败', medal.medalName, gift.gift_name, sendNum)]);
-                        throw error;
-                    }
-                }
-            }
-        } else {
-            logger.warn('无自动送礼目标直播间');
-            reportLog.push([true, '无自动送礼目标直播间']);
-        }
-
-        logger.info('赠送背包礼物成功');
-        reportLog.push([true, '赠送背包礼物成功']);
-    } catch (error) {
-        logger.error(error);
-        reportLog.push([false, '赠送背包礼物失败']);
+}): Promise<void> => {
+    if (roomIDs.length === 0) {
+        logger.warn('无自动送礼目标直播间');
+        return;
     }
 
-    return reportLog;
+    const [medals, gifts, giftInfo] = await Promise.all([
+        getFullMedalList(cookies),
+        getGiftBagList(cookies),
+        getGiftConfig(cookies),
+    ]);
+
+    const values = new Map<number, number>();
+    giftInfo.forEach((value) => values.set(value.id, Math.ceil(value.price / 100)));
+    values.set(30607, 50);
+
+    const pending = gifts.list.filter((value) => (
+        sendGiftType.includes(value.gift_id)
+            && value.expire_at - gifts.time < 60 * 60 * 24 * sendGiftTime
+    )).sort((left, right) => {
+        if (left.expire_at !== right.expire_at) {
+            return left.expire_at - right.expire_at;
+        }
+
+        return (values.get(right.gift_id) ?? 0) - (values.get(left.gift_id) ?? 0);
+    });
+
+    logger.debug(util.format('Pending Gifts: %o', pending));
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (const roomID of roomIDs) {
+        // eslint-disable-next-line no-await-in-loop
+        const roomInfo = await doRoomInit(cookies, roomID);
+        const medal = medals.find((value) => value.roomID === roomID);
+
+        assert(medal, `无法找到房间${roomID}对应的粉丝勋章`);
+
+        let restIntimacy = medal.dayLimit - medal.todayIntimacy;
+        logger.debug(`${medal.medalName} Daily Intimacy Rest ${restIntimacy}`);
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const gift of pending) {
+            const value = values.get(gift.gift_id);
+            const sendNum = value ? Math.min(Math.floor(restIntimacy / value), gift.gift_num) : 0;
+
+            if (value && sendNum > 0) {
+                logger.debug(`Send Gift ${gift.gift_name} (${gift.gift_id}) ${sendNum}/${gift.gift_num} to ${medal.medalName}`);
+
+                // eslint-disable-next-line no-await-in-loop
+                await sendGiftBag(
+                    cookies,
+                    uid,
+                    gift.gift_id,
+                    medal.targetID,
+                    sendNum,
+                    gift.bag_id,
+                    roomInfo.room_id,
+                    Math.round(Date.now() / 1000),
+                );
+
+                gift.gift_num -= sendNum;
+                restIntimacy -= value * sendNum;
+
+                logger.info(`向${medal.medalName}送出礼物${gift.gift_name}x${sendNum}成功: 获得亲密度${value * sendNum} (今日距离上限${restIntimacy})`);
+            }
+        }
+    }
 };

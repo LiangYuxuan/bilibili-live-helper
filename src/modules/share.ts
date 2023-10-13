@@ -1,24 +1,15 @@
-import util from 'util';
+import util from 'node:util';
 
-import logger from '../logger.js';
-import { getNewDynamic, DynamicCard, reportShare } from '../api.js';
+import logger from '../logger.ts';
+import { getNewDynamic, DynamicCard, reportShare } from '../api.ts';
 
-export default async (cookies: string, { uid }: { uid: number }): Promise<[boolean, string][]> => {
-    const reportLog: [boolean, string][] = [];
+export default async (cookies: string, { uid }: { uid: number }): Promise<void> => {
+    const dynamics = await getNewDynamic(cookies, uid, 8);
+    const firstCard = JSON.parse(dynamics.cards[0].card) as DynamicCard;
 
-    try {
-        const dynamics = await getNewDynamic(cookies, uid, 8);
-        const firstCard = JSON.parse(dynamics.cards[0].card) as DynamicCard;
+    logger.debug(util.format('Dynamic Card: %o', firstCard));
 
-        logger.debug('Dynamic Card: %o', firstCard);
+    await reportShare(cookies, firstCard.aid);
 
-        await reportShare(cookies, firstCard.aid);
-        logger.info('主站分享视频(aid: %d)成功', firstCard.aid);
-        reportLog.push([true, util.format('主站分享视频(aid: %d)成功', firstCard.aid)]);
-    } catch (error) {
-        logger.error(error);
-        reportLog.push([false, `主站分享视频失败: ${(error as Error).message}`]);
-    }
-
-    return reportLog;
+    logger.info(`分享视频(aid: ${firstCard.aid})`);
 };

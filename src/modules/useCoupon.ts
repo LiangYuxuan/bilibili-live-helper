@@ -1,9 +1,7 @@
-import util from 'util';
-
-import logger from '../logger.js';
+import logger from '../logger.ts';
 import {
     getUserCoupon, doElectricPay, sendElectricMessage, createOrder, getElectricMonth,
-} from '../api.js';
+} from '../api.ts';
 
 export default async (cookies: string, {
     uid, useCouponMode, useCouponTime, useCouponRest, chargeMsg,
@@ -11,9 +9,7 @@ export default async (cookies: string, {
 {
     uid: number, useCouponMode: number, useCouponTime: number,
     useCouponRest: boolean, chargeMsg: string
-}): Promise<[boolean, string][]> => {
-    const reportLog: [boolean, string][] = [];
-
+}): Promise<void> => {
     const today = new Date();
     const prev = new Date(today.getTime() - 31 * 24 * 60 * 60 * 1000);
 
@@ -30,24 +26,20 @@ export default async (cookies: string, {
 
     if (balance === 0) {
         logger.info('目前没有即将过期的B币卷。');
-        reportLog.push([true, '目前没有即将过期的B币卷。']);
     } else {
-        logger.info('目前有%d个即将过期的B币卷。', balance);
-        reportLog.push([true, util.format('目前有%d个即将过期的B币卷。', balance)]);
+        logger.info(`目前有${balance}个即将过期的B币卷。`);
 
         if (useCouponMode === 1 && (!useCouponRest || balance >= 2)) {
             // use for charge
             if (balance < 2) {
-                logger.warn('无法为自己充电，B币卷剩余小于2B币。');
-                reportLog.push([false, '无法为自己充电，B币卷剩余小于2B币。']);
+                logger.error('无法为自己充电，B币卷剩余小于2B币。');
             } else {
                 await getElectricMonth(cookies, uid); // would be failed if not enabled electric
 
                 const order = await doElectricPay(cookies, balance, uid, 'up', uid, true);
                 await sendElectricMessage(cookies, order.order_no, chargeMsg);
 
-                logger.info('使用B币卷成功: 为自己充电%d个B币成功。', balance);
-                reportLog.push([true, util.format('使用B币卷成功: 为自己充电%d个B币成功。', balance)]);
+                logger.info(`为自己充电${balance}个B币成功。`);
             }
         } else if (
             useCouponMode === 2
@@ -62,12 +54,9 @@ export default async (cookies: string, {
                 balance,
             );
 
-            logger.info('使用B币卷成功: 为自己兑换%d个B币(%d个电池)成功。', balance, balance * 10);
-            reportLog.push([true, util.format('使用B币卷成功: 为自己兑换%d个B币(%d个电池)成功。', balance, balance * 10)]);
+            logger.info(`使用B币卷成功: 为自己兑换${balance}个B币(${balance * 10}个电池)成功。`);
         } else {
             throw new Error(`不支持的模式: ${useCouponMode}`);
         }
     }
-
-    return reportLog;
 };

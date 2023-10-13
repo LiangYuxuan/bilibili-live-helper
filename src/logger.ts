@@ -1,6 +1,6 @@
 import winston from 'winston';
 
-export default winston.createLogger({
+const logger = winston.createLogger({
     format: winston.format.combine(
         winston.format.errors({
             stack: false,
@@ -14,14 +14,45 @@ export default winston.createLogger({
         new winston.transports.Console({
             level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
             format: winston.format.combine(
-                winston.format((info) => {
-                    // eslint-disable-next-line no-param-reassign
-                    info.level = info.level.toUpperCase();
-                    return info;
-                })(),
                 winston.format.colorize(),
                 winston.format.printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`),
             ),
         }),
     ],
 });
+
+let isAllSuccess = true;
+const pushText = [] as string[];
+const expose = {
+    debug: (text: string) => {
+        logger.debug(text);
+    },
+    info: (text: string, allSuccess = true) => {
+        isAllSuccess &&= allSuccess;
+
+        logger.info(text);
+        pushText.push(`✅${text}`);
+    },
+    warn: (text: string, allSuccess = true) => {
+        isAllSuccess &&= allSuccess;
+
+        logger.warn(text);
+        pushText.push(`⚠️${text}`);
+    },
+    error: (text: string, allSuccess = false) => {
+        isAllSuccess &&= allSuccess;
+
+        logger.error(text);
+        pushText.push(`❌${text}`);
+    },
+    getPushInfo: () => ({
+        isAllSuccess,
+        pushText,
+    }),
+    clearPushInfo: () => {
+        isAllSuccess = true;
+        pushText.length = 0;
+    },
+};
+
+export default expose;

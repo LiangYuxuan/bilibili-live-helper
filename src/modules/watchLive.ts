@@ -1,11 +1,10 @@
 import assert from 'assert';
-import util from 'util';
 
-import CryptoJS from 'crypto-js';
+import CryptoES from 'crypto-es';
 
-import logger from '../logger.js';
-import { getRoomInfo, enterRoomHeartbeat, inRoomHeartbeat } from '../api.js';
-import { Medal } from '../utils.js';
+import logger from '../logger.ts';
+import { getRoomInfo, enterRoomHeartbeat, inRoomHeartbeat } from '../api.ts';
+import { retry, delay, Medal } from '../utils.ts';
 
 const extractBUVID = (cookies: string): string | undefined => {
     const target = cookies.split(';').filter((value) => /^\s*LIVE_BUVID=/.test(value));
@@ -37,28 +36,25 @@ const calcHeartbeatHMAC = (
         time,
         ts,
     };
-    let result = JSON.stringify(data);
 
-    /* eslint-disable new-cap */
-    // eslint-disable-next-line no-restricted-syntax
-    for (const rule of rules) {
-        if (rule === 0) {
-            result = CryptoJS.HmacMD5(result, key).toString(CryptoJS.enc.Hex);
-        } else if (rule === 1) {
-            result = CryptoJS.HmacSHA1(result, key).toString(CryptoJS.enc.Hex);
-        } else if (rule === 2) {
-            result = CryptoJS.HmacSHA256(result, key).toString(CryptoJS.enc.Hex);
-        } else if (rule === 3) {
-            result = CryptoJS.HmacSHA224(result, key).toString(CryptoJS.enc.Hex);
-        } else if (rule === 4) {
-            result = CryptoJS.HmacSHA512(result, key).toString(CryptoJS.enc.Hex);
-        } else if (rule === 5) {
-            result = CryptoJS.HmacSHA384(result, key).toString(CryptoJS.enc.Hex);
+    return rules.reduce((prev, rule) => {
+        switch (rule) {
+            case 0:
+                return CryptoES.HmacMD5(prev, key).toString(CryptoES.enc.Hex);
+            case 1:
+                return CryptoES.HmacSHA1(prev, key).toString(CryptoES.enc.Hex);
+            case 2:
+                return CryptoES.HmacSHA256(prev, key).toString(CryptoES.enc.Hex);
+            case 3:
+                return CryptoES.HmacSHA224(prev, key).toString(CryptoES.enc.Hex);
+            case 4:
+                return CryptoES.HmacSHA512(prev, key).toString(CryptoES.enc.Hex);
+            case 5:
+                return CryptoES.HmacSHA384(prev, key).toString(CryptoES.enc.Hex);
+            default:
+                return prev;
         }
-    }
-    /* eslint-enable new-cap */
-
-    return result;
+    }, JSON.stringify(data));
 };
 
 const roomHeartbeat = async (
@@ -80,7 +76,7 @@ const roomHeartbeat = async (
     });
     let sequence = 0;
 
-    logger.debug('Enter Room Heartbeat in %d (%d)', originRoomID, roomID);
+    logger.debug(`Enter Room Heartbeat in ${originRoomID} (${roomID})`);
     const result = await enterRoomHeartbeat(
         cookies,
         JSON.stringify([parentAreaID, areaID, sequence, roomID]),
@@ -98,8 +94,8 @@ const roomHeartbeat = async (
     let key = result.secret_key;
     let rules = result.secret_rule;
     while (duration < 65 * 60) { // 65 minutes
-        // eslint-disable-next-line @typescript-eslint/no-loop-func
-        await new Promise((resolve) => setTimeout(resolve, nextTime * 1000));
+        // eslint-disable-next-line no-await-in-loop
+        await delay(nextTime * 1000);
         duration += nextTime;
 
         const now = Date.now();
@@ -117,7 +113,8 @@ const roomHeartbeat = async (
             now,
         );
 
-        logger.debug('In Room Heartbeat in %d (%d) (%d) +%ds', originRoomID, roomID, sequence, duration);
+        logger.debug(`In Room Heartbeat in ${originRoomID} (${roomID}) (${sequence}) +${duration}s`);
+        // eslint-disable-next-line no-await-in-loop
         const res = await inRoomHeartbeat(
             cookies,
             hmac,
@@ -138,74 +135,33 @@ const roomHeartbeat = async (
     }
 };
 
-const safeRoomHeartbeat = async (
-    reportLog: [boolean, string][],
-    cookies: string,
-    buvid: string,
-    originRoomID: number,
-    targetID: number,
-    targetName: string,
-): Promise<void> => {
-    for (let i = 0; i < 3; i += 1) {
-        try {
-            logger.info('开始观看直播间 %s (%d)', targetName, originRoomID);
-            reportLog.push([true, util.format('开始观看直播间 %s (%d)', targetName, originRoomID)]);
-
-            await roomHeartbeat(cookies, buvid, originRoomID, targetID);
-
-            logger.info('观看直播间 %s (%d) 完成', targetName, originRoomID);
-            reportLog.push([true, util.format('观看直播间 %s (%d) 完成', targetName, originRoomID)]);
-
-            return;
-        } catch (error) {
-            logger.error('观看直播间 %s (%d) 失败', targetName, originRoomID);
-            logger.error(error);
-
-            reportLog.push([false, util.format('观看直播间 %s (%d) 失败', targetName, originRoomID)]);
-            reportLog.push([false, (error as Error).message]);
-        }
-    }
-};
-
 export default async (
     cookies: string,
     { medals }: { medals: Medal[] },
-): Promise<[boolean, string][]> => {
-    const reportLog: [boolean, string][] = [];
-
+) => {
     const buvid = extractBUVID(cookies);
 
     assert(buvid !== undefined, '获取LIVE_BUVID值失败');
 
     const allRooms = [];
-    for (let i = 0; i < medals.length; i += 1) {
-        const medal = medals[i];
-        if (medal.level >= 20) {
-            continue;
-        }
-
+    // eslint-disable-next-line no-restricted-syntax
+    for (const medal of medals.filter((value) => value.level < 20)) {
         allRooms.push(
-            safeRoomHeartbeat(
-                reportLog,
-                cookies,
-                buvid,
-                medal.roomID,
-                medal.targetID,
-                medal.targetName,
+            retry(
+                () => {
+                    logger.info(`开始观看直播间 ${medal.targetName} (${medal.roomID})`);
+                    return roomHeartbeat(cookies, buvid, medal.roomID, medal.targetID);
+                },
+                3,
+                1000,
+                `观看直播间 ${medal.targetName} (${medal.roomID}) 完成`,
+                `观看直播间 ${medal.targetName} (${medal.roomID}) 失败`,
             ),
         );
 
-        await new Promise((resolve) => setTimeout(resolve, 1000));
+        // eslint-disable-next-line no-await-in-loop
+        await delay(1000);
     }
 
-    try {
-        await Promise.all(allRooms);
-        logger.info('直播间观看成功');
-        reportLog.push([true, '直播间观看成功']);
-    } catch (error) {
-        logger.error(error);
-        reportLog.push([false, '直播间观看失败']);
-    }
-
-    return reportLog;
+    await Promise.all(allRooms);
 };

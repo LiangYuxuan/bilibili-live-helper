@@ -1,5 +1,3 @@
-/* eslint-disable camelcase */
-
 import assert from 'assert';
 import got from 'got';
 

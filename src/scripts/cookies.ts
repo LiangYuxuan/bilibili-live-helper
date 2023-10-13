@@ -1,9 +1,12 @@
+/* eslint-disable no-console */
 /* eslint-disable @typescript-eslint/naming-convention */
 
 import assert from 'assert';
 import fs from 'fs';
 import got from 'got';
 import qrcode from 'qrcode-terminal';
+
+import { delay } from '../utils.ts';
 
 const UserAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36';
 
@@ -58,13 +61,15 @@ const checkLogin = async (oauthKey: string) => {
     const startTime = Date.now();
 
     while (Date.now() - startTime < 180 * 1000) {
+        // eslint-disable-next-line no-await-in-loop
         const { status, data } = await getLoginInfo(oauthKey);
 
         if (status && typeof data === 'object') {
             return data.url;
         }
 
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        // eslint-disable-next-line no-await-in-loop
+        await delay(2000);
     }
 
     throw new Error('二维码扫描超时');

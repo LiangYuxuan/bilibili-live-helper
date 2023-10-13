@@ -1,19 +1,21 @@
-import logger from './logger.js';
-import { getUserInfo } from './api.js';
-import { getFullMedalList, Medal } from './utils.js';
+import util from 'node:util';
 
-import login from './modules/login.js';
-import watch from './modules/watch.js';
-import share from './modules/share.js';
-import getCoupon from './modules/getCoupon.js';
-import useCoupon from './modules/useCoupon.js';
-import signin from './modules/signin.js';
-import groupSignIn from './modules/groupSignin.js';
-import danmu from './modules/danmu.js';
-import gift from './modules/gift.js';
-import likeLive from './modules/likeLive.js';
-import shareLive from './modules/shareLive.js';
-import watchLive from './modules/watchLive.js';
+import logger from './logger.ts';
+import { getUserInfo } from './api.ts';
+import { retry, getFullMedalList, Medal } from './utils.ts';
+
+import login from './modules/login.ts';
+import watch from './modules/watch.ts';
+import share from './modules/share.ts';
+import getCoupon from './modules/getCoupon.ts';
+import useCoupon from './modules/useCoupon.ts';
+import signin from './modules/signin.ts';
+import groupSignIn from './modules/groupSignin.ts';
+import danmu from './modules/danmu.ts';
+import gift from './modules/gift.ts';
+import likeLive from './modules/likeLive.ts';
+import shareLive from './modules/shareLive.ts';
+import watchLive from './modules/watchLive.ts';
 
 interface Config {
     login: boolean,
@@ -38,17 +40,16 @@ interface Config {
     chargeMsg: string,
 }
 
-export default async (cookies: string, config: Config): Promise<[boolean, [boolean, string][]]> => {
+export default async (cookies: string, config: Config) => {
     const [userInfo, medals] = await Promise.all([
         getUserInfo(cookies),
         getFullMedalList(cookies),
     ]);
 
-    logger.debug('UserInfo: %o', userInfo);
-    logger.debug('Medals: %o', medals);
+    logger.debug(util.format('UserInfo: %o', userInfo));
+    logger.debug(util.format('Medals: %o', medals));
 
     const { uid } = userInfo;
-    const reportLog: [boolean, string][] = [];
 
     const castTable: [
         boolean, string, (
@@ -65,7 +66,7 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
                 roomIDs: number[],
                 sendGiftType: number[],
                 sendGiftTime: number },
-        ) => Promise<[boolean, string][]>,
+        ) => Promise<void>,
     ][] = [
         [config.login, '主站签到', login],
         [config.watchVideo, '主站观看视频', watch],
@@ -81,13 +82,13 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
         [config.watchLive, '直播间观看', watchLive],
     ];
 
-    let isAllSuccess = true;
-    for (let i = 0; i < castTable.length; i += 1) {
-        const [cast, name, module] = castTable[i];
+    // eslint-disable-next-line no-restricted-syntax
+    for (const [cast, name, module] of castTable) {
         if (cast) {
-            for (let j = 0; j < 3; j += 1) {
-                try {
-                    const log = await module(cookies, {
+            try {
+                // eslint-disable-next-line no-await-in-loop
+                await retry(
+                    () => module(cookies, {
                         uid,
                         medals,
                         useCouponMode: config.useCouponMode,
@@ -98,23 +99,15 @@ export default async (cookies: string, config: Config): Promise<[boolean, [boole
                         roomIDs: config.roomIDs,
                         sendGiftType: config.sendGiftType,
                         sendGiftTime: config.sendGiftTime,
-                    });
-
-                    const isSuccess = log[log.length - 1][0];
-                    isAllSuccess &&= isSuccess;
-                    reportLog.push(...log);
-
-                    if (isSuccess) {
-                        break;
-                    }
-                } catch (error) {
-                    isAllSuccess = false;
-                    logger.error(error);
-                    reportLog.push([false, `${name}失败: ${(error as Error).message}`]);
-                }
+                    }),
+                    3,
+                    1000,
+                    `${name}成功`,
+                    `${name}失败`,
+                );
+            } catch (error) {
+                // nothing to do
             }
         }
     }
-
-    return [isAllSuccess, reportLog];
 };

@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc --project ./",
     "start": "ts-node-esm src/app.ts",
-    "start:cookies": "ts-node-esm src/scripts/cookies.js",
+    "start:cookies": "ts-node-esm src/scripts/cookies.ts",
     "dev": "NODE_ENV=development ts-node-esm src/app.ts",
     "dev:cookies": "NODE_ENV=development ts-node-esm src/scripts/cookies.ts",
     "lint": "eslint src/ --ext .js,.jsx,.ts,.tsx",

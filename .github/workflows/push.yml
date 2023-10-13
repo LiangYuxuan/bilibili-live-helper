@@ -1,4 +1,4 @@
-name: deploy
+name: build & deploy
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -16,7 +16,7 @@ jobs:
 
       - uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '18'
 
       - run: corepack enable
 
@@ -26,11 +26,34 @@ jobs:
 
       - run: pnpm build
 
-      - uses: easingthemes/ssh-deploy@v4.1.10
+      - uses: docker/setup-qemu-action@v3
+
+      - uses: docker/setup-buildx-action@v3
         with:
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          SSH_PRIVATE_KEY: ${{ secrets.SERVER_SSH_KEY }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}
-          ARGS: "-avz --delete"
-          EXCLUDE: "/.git/, /.github/, .env, .cookies"
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+
+      - uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: rhyster/bilibili-live-helper:latest
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          port: ${{ secrets.REMOTE_PORT }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            docker pull rhyster/bilibili-live-helper:latest
+            docker rmi $(docker images -f "dangling=true" -q) --force

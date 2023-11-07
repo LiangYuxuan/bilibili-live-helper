@@ -32,8 +32,8 @@ devDependencies:
     specifier: ^3.0.10
     version: 3.0.10
   '@types/qrcode-terminal':
-    specifier: ^0.12.1
-    version: 0.12.1
+    specifier: ^0.12.2
+    version: 0.12.2
   '@typescript-eslint/eslint-plugin':
     specifier: ^6.10.0
     version: 6.10.0(@typescript-eslint/parser@6.10.0)(eslint@8.53.0)(typescript@5.2.2)
@@ -232,8 +232,8 @@ packages:
       undici-types: 5.26.5
     dev: true
 
-  /@types/qrcode-terminal@0.12.1:
-    resolution: {integrity: sha512-8OiEJdQj/C4IOAK4fW8b9f82ZR72mvWXAEXJIUv1ZMmU7XlKiEPnF6iPnYfUcUX1JLuNjrPfa4qz/yEMLQK/oQ==}
+  /@types/qrcode-terminal@0.12.2:
+    resolution: {integrity: sha512-v+RcIEJ+Uhd6ygSQ0u5YYY7ZM+la7GgPbs0V/7l/kFs2uO4S8BcIUEMoP7za4DNIqNnUD5npf0A/7kBhrCKG5Q==}
     dev: true
 
   /@types/semver@7.5.0:

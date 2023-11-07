@@ -26,7 +26,7 @@
   "devDependencies": {
     "@types/node": "^20.8.10",
     "@types/node-cron": "^3.0.10",
-    "@types/qrcode-terminal": "^0.12.1",
+    "@types/qrcode-terminal": "^0.12.2",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
     "@typescript-eslint/parser": "^6.10.0",
     "eslint": "^8.53.0",

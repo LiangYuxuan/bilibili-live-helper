@@ -4,6 +4,7 @@
   "description": "",
   "type": "module",
   "scripts": {
+    "build": "tsc --project ./",
     "start": "node --no-warnings=ExperimentalWarning --loader ts-node/esm src/app.ts",
     "start:cookies": "node --no-warnings=ExperimentalWarning --loader ts-node/esm src/scripts/cookies.ts",
     "dev": "NODE_ENV=development node --no-warnings=ExperimentalWarning --loader ts-node/esm src/app.ts",

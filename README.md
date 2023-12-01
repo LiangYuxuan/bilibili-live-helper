@@ -66,7 +66,7 @@ docker run --rm --env-file .env --name bilibili rhyster/bilibili-live-helper:lat
 
 1. 运行环境
 
-需要环境 Node.js >= 14.18.2
+需要环境 Node.js >= 20.10.0
 
 2. 配置
 

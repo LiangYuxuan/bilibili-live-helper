@@ -26,8 +26,8 @@ dependencies:
 
 devDependencies:
   '@types/node':
-    specifier: ^20.11.0
-    version: 20.11.0
+    specifier: ^20.11.2
+    version: 20.11.2
   '@types/node-cron':
     specifier: ^3.0.11
     version: 3.0.11
@@ -51,7 +51,7 @@ devDependencies:
     version: 17.1.0(@typescript-eslint/eslint-plugin@6.18.1)(@typescript-eslint/parser@6.18.1)(eslint-plugin-import@2.27.5)(eslint@8.56.0)
   ts-node:
     specifier: ^10.9.2
-    version: 10.9.2(@types/node@20.11.0)(typescript@5.3.3)
+    version: 10.9.2(@types/node@20.11.2)(typescript@5.3.3)
   typescript:
     specifier: ^5.3.3
     version: 5.3.3
@@ -226,8 +226,8 @@ packages:
     resolution: {integrity: sha512-0ikrnug3/IyneSHqCBeslAhlK2aBfYek1fGo4bP4QnZPmiqSGRK+Oy7ZMisLWkesffJvQ1cqAcBnJC+8+nxIAg==}
     dev: true
 
-  /@types/node@20.11.0:
-    resolution: {integrity: sha512-o9bjXmDNcF7GbM4CNQpmi+TutCgap/K3w1JyKgxAjqx41zp9qlIAVFi0IhCNsJcXolEqLWhbFbEeL0PvYm4pcQ==}
+  /@types/node@20.11.2:
+    resolution: {integrity: sha512-cZShBaVa+UO1LjWWBPmWRR4+/eY/JR/UIEcDlVsw3okjWEu+rB7/mH6X3B/L+qJVHDLjk9QW/y2upp9wp1yDXA==}
     dependencies:
       undici-types: 5.26.5
     dev: true
@@ -1860,7 +1860,7 @@ packages:
       typescript: 5.3.3
     dev: true
 
-  /ts-node@10.9.2(@types/node@20.11.0)(typescript@5.3.3):
+  /ts-node@10.9.2(@types/node@20.11.2)(typescript@5.3.3):
     resolution: {integrity: sha512-f0FFpIdcHgn8zcPSbf1dRevwt047YMnaiJM3u2w2RewrB+fob/zePZcrOyQoLMMO7aBIddLcQIEK5dYjkLnGrQ==}
     hasBin: true
     peerDependencies:
@@ -1879,7 +1879,7 @@ packages:
       '@tsconfig/node12': 1.0.9
       '@tsconfig/node14': 1.0.1
       '@tsconfig/node16': 1.0.2
-      '@types/node': 20.11.0
+      '@types/node': 20.11.2
       acorn: 8.9.0
       acorn-walk: 8.2.0
       arg: 4.1.3

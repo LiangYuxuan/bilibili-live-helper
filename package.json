@@ -18,13 +18,13 @@
   "dependencies": {
     "crypto-es": "^2.1.0",
     "dotenv": "^16.4.1",
-    "got": "^14.1.0",
+    "got": "^14.2.0",
     "node-cron": "^3.0.3",
     "qrcode-terminal": "^0.12.0",
     "winston": "^3.11.0"
   },
   "devDependencies": {
-    "@types/node": "^20.11.13",
+    "@types/node": "^20.11.16",
     "@types/node-cron": "^3.0.11",
     "@types/qrcode-terminal": "^0.12.2",
     "@typescript-eslint/eslint-plugin": "^6.20.0",

@@ -17,7 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "crypto-es": "^2.1.0",
-    "dotenv": "^16.4.2",
+    "dotenv": "^16.4.4",
     "got": "^14.2.0",
     "node-cron": "^3.0.3",
     "qrcode-terminal": "^0.12.0",

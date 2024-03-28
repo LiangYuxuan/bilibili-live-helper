@@ -56,4 +56,4 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             docker pull rhyster/bilibili-live-helper:latest
-            docker rmi $(docker images -f "dangling=true" -q) --force
+            docker image prune -f

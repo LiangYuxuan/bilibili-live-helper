@@ -17,5 +17,5 @@ export default async (cookies: string, { uid }: { uid: number }): Promise<void> 
         Math.round(Date.now() / 1000),
     );
 
-    logger.info(`观看视频(aid: ${firstCard.aid})`);
+    logger.info(`观看视频(aid: ${firstCard.aid.toString()})`);
 };

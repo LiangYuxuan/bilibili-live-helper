@@ -15,13 +15,13 @@ export default async (
                 () => getRoomInfo(cookies, roomID),
                 3,
                 1000,
-                `房间${medal.roomID}信息获取成功`,
-                `房间${medal.roomID}信息获取失败`,
+                `房间${medal.roomID.toString()}信息获取成功`,
+                `房间${medal.roomID.toString()}信息获取失败`,
             );
             roomID = roomInfo.room_id;
         }
 
-        logger.debug(`Send like to Room ${roomID} (${medal.roomID}) (${medal.targetName})`);
+        logger.debug(`Send like to Room ${roomID.toString()} (${medal.roomID.toString()}) (${medal.targetName})`);
 
         // eslint-disable-next-line no-await-in-loop
         await retry(

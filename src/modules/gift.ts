@@ -50,10 +50,10 @@ export default async (cookies: string, {
         const roomInfo = await doRoomInit(cookies, roomID);
         const medal = medals.find((value) => value.roomID === roomID);
 
-        assert(medal, `无法找到房间${roomID}对应的粉丝勋章`);
+        assert(medal, `无法找到房间${roomID.toString()}对应的粉丝勋章`);
 
         let restIntimacy = medal.dayLimit - medal.todayIntimacy;
-        logger.debug(`${medal.medalName} Daily Intimacy Rest ${restIntimacy}`);
+        logger.debug(`${medal.medalName} Daily Intimacy Rest ${restIntimacy.toString()}`);
 
         // eslint-disable-next-line no-restricted-syntax
         for (const gift of pending) {
@@ -61,7 +61,7 @@ export default async (cookies: string, {
             const sendNum = value ? Math.min(Math.floor(restIntimacy / value), gift.gift_num) : 0;
 
             if (value && sendNum > 0) {
-                logger.debug(`Send Gift ${gift.gift_name} (${gift.gift_id}) ${sendNum}/${gift.gift_num} to ${medal.medalName}`);
+                logger.debug(`Send Gift ${gift.gift_name} (${gift.gift_id.toString()}) ${sendNum.toString()}/${gift.gift_num.toString()} to ${medal.medalName}`);
 
                 // eslint-disable-next-line no-await-in-loop
                 await sendGiftBag(
@@ -78,7 +78,7 @@ export default async (cookies: string, {
                 gift.gift_num -= sendNum;
                 restIntimacy -= value * sendNum;
 
-                logger.info(`向${medal.medalName}送出礼物${gift.gift_name}x${sendNum}成功: 获得亲密度${value * sendNum} (今日距离上限${restIntimacy})`);
+                logger.info(`向${medal.medalName}送出礼物${gift.gift_name}x${sendNum.toString()}成功: 获得亲密度${(value * sendNum).toString()} (今日距离上限${restIntimacy.toString()})`);
             }
         }
     }

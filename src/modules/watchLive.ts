@@ -76,7 +76,7 @@ const roomHeartbeat = async (
     });
     let sequence = 0;
 
-    logger.debug(`Enter Room Heartbeat in ${originRoomID} (${roomID})`);
+    logger.debug(`Enter Room Heartbeat in ${originRoomID.toString()} (${roomID.toString()})`);
     const result = await enterRoomHeartbeat(
         cookies,
         JSON.stringify([parentAreaID, areaID, sequence, roomID]),
@@ -113,7 +113,7 @@ const roomHeartbeat = async (
             now,
         );
 
-        logger.debug(`In Room Heartbeat in ${originRoomID} (${roomID}) (${sequence}) +${duration}s`);
+        logger.debug(`In Room Heartbeat in ${originRoomID.toString()} (${roomID.toString()}) (${sequence.toString()}) +${duration.toString()}s`);
         // eslint-disable-next-line no-await-in-loop
         const res = await inRoomHeartbeat(
             cookies,
@@ -149,13 +149,13 @@ export default async (
         allRooms.push(
             retry(
                 () => {
-                    logger.info(`开始观看直播间 ${medal.targetName} (${medal.roomID})`);
+                    logger.info(`开始观看直播间 ${medal.targetName} (${medal.roomID.toString()})`);
                     return roomHeartbeat(cookies, buvid, medal.roomID, medal.targetID);
                 },
                 3,
                 1000,
-                `观看直播间 ${medal.targetName} (${medal.roomID}) 完成`,
-                `观看直播间 ${medal.targetName} (${medal.roomID}) 失败`,
+                `观看直播间 ${medal.targetName} (${medal.roomID.toString()}) 完成`,
+                `观看直播间 ${medal.targetName} (${medal.roomID.toString()}) 失败`,
             ),
         );
 

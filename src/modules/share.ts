@@ -11,5 +11,5 @@ export default async (cookies: string, { uid }: { uid: number }): Promise<void> 
 
     await reportShare(cookies, firstCard.aid);
 
-    logger.info(`分享视频(aid: ${firstCard.aid})`);
+    logger.info(`分享视频(aid: ${firstCard.aid.toString()})`);
 };

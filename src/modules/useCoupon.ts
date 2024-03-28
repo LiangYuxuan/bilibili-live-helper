@@ -27,7 +27,7 @@ export default async (cookies: string, {
     if (balance === 0) {
         logger.info('目前没有即将过期的B币卷。');
     } else {
-        logger.info(`目前有${balance}个即将过期的B币卷。`);
+        logger.info(`目前有${balance.toString()}个即将过期的B币卷。`);
 
         if (useCouponMode === 1 && (!useCouponRest || balance >= 2)) {
             // use for charge
@@ -39,7 +39,7 @@ export default async (cookies: string, {
                 const order = await doElectricPay(cookies, balance, uid, 'up', uid, true);
                 await sendElectricMessage(cookies, order.order_no, chargeMsg);
 
-                logger.info(`为自己充电${balance}个B币成功。`);
+                logger.info(`为自己充电${balance.toString()}个B币成功。`);
             }
         } else if (
             useCouponMode === 2
@@ -54,9 +54,9 @@ export default async (cookies: string, {
                 balance,
             );
 
-            logger.info(`使用B币卷成功: 为自己兑换${balance}个B币(${balance * 10}个电池)成功。`);
+            logger.info(`使用B币卷成功: 为自己兑换${balance.toString()}个B币(${(balance * 10).toString()}个电池)成功。`);
         } else {
-            throw new Error(`不支持的模式: ${useCouponMode}`);
+            throw new Error(`不支持的模式: ${useCouponMode.toString()}`);
         }
     }
 };

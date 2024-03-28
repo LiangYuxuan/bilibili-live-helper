@@ -153,4 +153,6 @@ const checkLogin = async (qrcode_key: string) => {
     fs.writeFileSync('.cookies', `${cookiesText}; ${LIVE_BUVID}`);
 
     console.log('获取Cookies成功，已经写入.cookies文件。');
-})().catch(console.log);
+})().catch((error: unknown) => {
+    console.error(error);
+});

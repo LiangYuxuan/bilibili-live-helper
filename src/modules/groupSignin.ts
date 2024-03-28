@@ -29,7 +29,7 @@ export default async (
         () => doGroupSign(cookies, value.group_id, value.owner_uid),
         3,
         1000,
-        (res) => `应援团(${value.fans_medal_name})签到成功: ${res.status === 1 ? '今天已经完成应援' : `亲密度+${res.add_num}`}`,
+        (res) => `应援团(${value.fans_medal_name})签到成功: ${res.status === 1 ? '今天已经完成应援' : `亲密度+${res.add_num.toString()}`}`,
         `应援团(${value.fans_medal_name})签到失败`,
     )));
 };

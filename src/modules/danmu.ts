@@ -23,8 +23,8 @@ export default async (
                 () => getRoomInfo(cookies, roomID),
                 3,
                 1000,
-                `房间${medal.roomID}信息获取成功`,
-                `房间${medal.roomID}信息获取失败`,
+                `房间${medal.roomID.toString()}信息获取成功`,
+                `房间${medal.roomID.toString()}信息获取失败`,
             );
             roomID = roomInfo.room_id;
         }
@@ -39,7 +39,7 @@ export default async (
 
         const danmu = danmuList[Math.floor(Math.random() * danmuList.length)];
 
-        logger.debug(`Send danmu ${danmu} to Room ${roomID} (${medal.roomID}) (${medal.targetName})`);
+        logger.debug(`Send danmu ${danmu} to Room ${roomID.toString()} (${medal.roomID.toString()}) (${medal.targetName})`);
 
         // eslint-disable-next-line no-await-in-loop
         await retry(
@@ -56,7 +56,7 @@ export default async (
 
     if (wearedMedal) {
         await wearMedal(cookies, wearedMedal);
-        logger.debug(`Restore weared medal ${wearedMedal}`);
+        logger.debug(`Restore weared medal ${wearedMedal.toString()}`);
     } else {
         await takeOffMedal(cookies);
         logger.debug('Take off weared medal');

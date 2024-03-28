@@ -15,7 +15,7 @@ const logger = winston.createLogger({
             level: process.env.NODE_ENV === 'development' ? 'debug' : 'info',
             format: winston.format.combine(
                 winston.format.colorize(),
-                winston.format.printf((info) => `[${info.timestamp}] ${info.level}: ${info.message}`),
+                winston.format.printf((info) => `[${info.timestamp as string}] ${info.level}: ${info.message as string}`),
             ),
         }),
     ],

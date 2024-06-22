@@ -24,7 +24,7 @@
     "winston": "^3.13.0"
   },
   "devDependencies": {
-    "@types/node": "^20.14.7",
+    "@types/node": "^20.14.8",
     "@types/node-cron": "^3.0.11",
     "@types/qrcode-terminal": "^0.12.2",
     "@typescript-eslint/eslint-plugin": "^7.13.1",

@@ -1,6 +1,6 @@
 {
   "name": "bilibili-live-helper",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "",
   "type": "module",
   "scripts": {
@@ -18,13 +18,13 @@
   "dependencies": {
     "crypto-es": "^2.1.0",
     "dotenv": "^16.4.5",
-    "got": "^14.4.3",
+    "got": "^14.4.4",
     "node-cron": "^3.0.3",
     "qrcode-terminal": "^0.12.0",
-    "winston": "^3.16.0"
+    "winston": "^3.17.0"
   },
   "devDependencies": {
-    "@types/node": "^22.8.7",
+    "@types/node": "^22.9.0",
     "@types/node-cron": "^3.0.11",
     "@types/qrcode-terminal": "^0.12.2",
     "@typescript-eslint/eslint-plugin": "^7.18.0",

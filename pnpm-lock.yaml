@@ -15,7 +15,7 @@ importers:
         specifier: ^16.4.5
         version: 16.4.5
       got:
-        specifier: ^14.4.3
+        specifier: ^14.4.4
         version: 14.4.4
       node-cron:
         specifier: ^3.0.3
@@ -24,11 +24,11 @@ importers:
         specifier: ^0.12.0
         version: 0.12.0
       winston:
-        specifier: ^3.16.0
+        specifier: ^3.17.0
         version: 3.17.0
     devDependencies:
       '@types/node':
-        specifier: ^22.8.7
+        specifier: ^22.9.0
         version: 22.9.0
       '@types/node-cron':
         specifier: ^3.0.11

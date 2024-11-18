@@ -1,8 +1,10 @@
 import util from 'node:util';
 
-import logger from '../logger.ts';
 import { getGroupList, doGroupSign } from '../api.ts';
-import { retry, Medal } from '../utils.ts';
+import logger from '../logger.ts';
+import { retry } from '../utils.ts';
+
+import type { Medal } from '../utils.ts';
 
 export default async (
     cookies: string,

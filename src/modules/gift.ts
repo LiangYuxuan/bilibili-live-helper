@@ -1,10 +1,10 @@
 import assert from 'node:assert';
 import util from 'node:util';
 
-import logger from '../logger.ts';
 import {
     getGiftBagList, getGiftConfig, doRoomInit, sendGiftBag,
 } from '../api.ts';
+import logger from '../logger.ts';
 import { getFullMedalList } from '../utils.ts';
 
 export default async (cookies: string, {
@@ -21,7 +21,11 @@ export default async (cookies: string, {
         return;
     }
 
-    const [medals, gifts, giftInfo] = await Promise.all([
+    const [
+        medals,
+        gifts,
+        giftInfo,
+    ] = await Promise.all([
         getFullMedalList(cookies),
         getGiftBagList(cookies),
         getGiftConfig(cookies),
@@ -44,7 +48,6 @@ export default async (cookies: string, {
 
     logger.debug(util.format('Pending Gifts: %o', pending));
 
-    // eslint-disable-next-line no-restricted-syntax
     for (const roomID of roomIDs) {
         // eslint-disable-next-line no-await-in-loop
         const roomInfo = await doRoomInit(cookies, roomID);
@@ -55,12 +58,13 @@ export default async (cookies: string, {
         let restIntimacy = medal.dayLimit - medal.todayIntimacy;
         logger.debug(`${medal.medalName} Daily Intimacy Rest ${restIntimacy.toString()}`);
 
-        // eslint-disable-next-line no-restricted-syntax
         for (const gift of pending) {
             const value = values.get(gift.gift_id);
-            const sendNum = value ? Math.min(Math.floor(restIntimacy / value), gift.gift_num) : 0;
+            const sendNum = value !== undefined
+                ? Math.min(Math.floor(restIntimacy / value), gift.gift_num)
+                : 0;
 
-            if (value && sendNum > 0) {
+            if (value !== undefined && sendNum > 0) {
                 logger.debug(`Send Gift ${gift.gift_name} (${gift.gift_id.toString()}) ${sendNum.toString()}/${gift.gift_num.toString()} to ${medal.medalName}`);
 
                 // eslint-disable-next-line no-await-in-loop

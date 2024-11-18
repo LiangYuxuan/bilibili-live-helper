@@ -1,11 +1,13 @@
+import { getMedalList } from './api.ts';
 import logger from './logger.ts';
-import { getMedalList, MedalList, FansMedal } from './api.ts';
 
-export const delay = (ms: number): Promise<void> => new Promise((resolve) => {
+import type { MedalList, FansMedal } from './api.ts';
+
+const delay = (ms: number): Promise<void> => new Promise((resolve) => {
     setTimeout(resolve, ms);
 });
 
-export const retry = async <T>(
+const retry = async <T>(
     func: () => Promise<T>,
     times: number,
     errorDelayMS: number,
@@ -13,7 +15,7 @@ export const retry = async <T>(
     errorMessage: string,
 ): Promise<T> => {
     let currentTimes = 0;
-    // eslint-disable-next-line no-constant-condition, @typescript-eslint/no-unnecessary-condition
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     while (true) {
         try {
             // eslint-disable-next-line no-await-in-loop
@@ -43,7 +45,7 @@ export const retry = async <T>(
     }
 };
 
-export interface Medal {
+interface Medal {
     targetID: number;
     targetName: string;
     roomID: number;
@@ -99,7 +101,7 @@ const handleMedalList = (list: FansMedal[]): Medal[] => {
     return result;
 };
 
-export const getFullMedalList = async (cookies: string): Promise<Medal[]> => {
+const getFullMedalList = async (cookies: string): Promise<Medal[]> => {
     const firstPage = await getMedalList(cookies);
     const length = firstPage.page_info.total_page;
     let result = handleMedalList(firstPage.items);
@@ -113,4 +115,14 @@ export const getFullMedalList = async (cookies: string): Promise<Medal[]> => {
     });
 
     return result;
+};
+
+export {
+    delay,
+    retry,
+    getFullMedalList,
+};
+
+export type {
+    Medal,
 };

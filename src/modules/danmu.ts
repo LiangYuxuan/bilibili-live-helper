@@ -1,10 +1,12 @@
 import util from 'node:util';
 
-import logger from '../logger.ts';
 import {
     getWearedMedal, wearMedal, takeOffMedal, getRoomInfo, sendDanmu,
 } from '../api.ts';
-import { retry, delay, Medal } from '../utils.ts';
+import logger from '../logger.ts';
+import { retry, delay } from '../utils.ts';
+
+import type { Medal } from '../utils.ts';
 
 export default async (
     cookies: string,
@@ -14,7 +16,6 @@ export default async (
 
     logger.debug(util.format('Weared Medal: %o', wearedMedal));
 
-    // eslint-disable-next-line no-restricted-syntax
     for (const medal of medals) {
         let { roomID } = medal;
         if (roomID < 10000) {
@@ -54,7 +55,7 @@ export default async (
         await delay(4000);
     }
 
-    if (wearedMedal) {
+    if (wearedMedal !== undefined) {
         await wearMedal(cookies, wearedMedal);
         logger.debug(`Restore weared medal ${wearedMedal.toString()}`);
     } else {

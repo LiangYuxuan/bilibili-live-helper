@@ -1,14 +1,17 @@
-import logger from '../logger.ts';
 import {
     getUserCoupon, doElectricPay, sendElectricMessage, createOrder, getElectricMonth,
 } from '../api.ts';
+import logger from '../logger.ts';
 
 export default async (cookies: string, {
     uid, useCouponMode, useCouponTime, useCouponRest, chargeMsg,
 }:
 {
-    uid: number, useCouponMode: number, useCouponTime: number,
-    useCouponRest: boolean, chargeMsg: string
+    uid: number,
+    useCouponMode: number,
+    useCouponTime: number,
+    useCouponRest: boolean,
+    chargeMsg: string
 }): Promise<void> => {
     const today = new Date();
     const prev = new Date(today.getTime() - 31 * 24 * 60 * 60 * 1000);

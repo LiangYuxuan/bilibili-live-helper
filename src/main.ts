@@ -1,21 +1,22 @@
 import util from 'node:util';
 
-import logger from './logger.ts';
 import { getUserInfo } from './api.ts';
-import { retry, getFullMedalList, Medal } from './utils.ts';
-
-import login from './modules/login.ts';
-import watch from './modules/watch.ts';
-import share from './modules/share.ts';
-import getCoupon from './modules/getCoupon.ts';
-import useCoupon from './modules/useCoupon.ts';
-import signin from './modules/signin.ts';
-import groupSignIn from './modules/groupSignin.ts';
+import logger from './logger.ts';
 import danmu from './modules/danmu.ts';
+import getCoupon from './modules/getCoupon.ts';
 import gift from './modules/gift.ts';
+import groupSignIn from './modules/groupSignin.ts';
 import likeLive from './modules/likeLive.ts';
+import login from './modules/login.ts';
+import share from './modules/share.ts';
 import shareLive from './modules/shareLive.ts';
+import signin from './modules/signin.ts';
+import useCoupon from './modules/useCoupon.ts';
+import watch from './modules/watch.ts';
 import watchLive from './modules/watchLive.ts';
+import { retry, getFullMedalList } from './utils.ts';
+
+import type { Medal } from './utils.ts';
 
 interface Config {
     login: boolean,
@@ -65,25 +66,77 @@ export default async (cookies: string, config: Config) => {
                 danmuList: string[],
                 roomIDs: number[],
                 sendGiftType: number[],
-                sendGiftTime: number },
+                sendGiftTime: number,
+            },
         ) => Promise<void>,
     ][] = [
-        [config.login, '主站签到', login],
-        [config.watchVideo, '主站观看视频', watch],
-        [config.shareVideo, '主站分享视频', share],
-        [config.getCoupon, '领取B币卷', getCoupon],
-        [config.useCoupon, '使用B币卷', useCoupon],
-        [config.liveDailySign, '直播区签到', signin],
-        [config.groupDailySign, '应援团签到', groupSignIn],
-        [config.medalDanmu, '粉丝勋章弹幕', danmu],
-        [config.sendGift, '赠送背包礼物', gift],
-        [config.likeLive, '直播间点赞', likeLive],
-        [config.shareLive, '直播间分享', shareLive],
-        [config.watchLive, '直播间观看', watchLive],
+        [
+            config.login,
+            '主站签到',
+            login,
+        ],
+        [
+            config.watchVideo,
+            '主站观看视频',
+            watch,
+        ],
+        [
+            config.shareVideo,
+            '主站分享视频',
+            share,
+        ],
+        [
+            config.getCoupon,
+            '领取B币卷',
+            getCoupon,
+        ],
+        [
+            config.useCoupon,
+            '使用B币卷',
+            useCoupon,
+        ],
+        [
+            config.liveDailySign,
+            '直播区签到',
+            signin,
+        ],
+        [
+            config.groupDailySign,
+            '应援团签到',
+            groupSignIn,
+        ],
+        [
+            config.medalDanmu,
+            '粉丝勋章弹幕',
+            danmu,
+        ],
+        [
+            config.sendGift,
+            '赠送背包礼物',
+            gift,
+        ],
+        [
+            config.likeLive,
+            '直播间点赞',
+            likeLive,
+        ],
+        [
+            config.shareLive,
+            '直播间分享',
+            shareLive,
+        ],
+        [
+            config.watchLive,
+            '直播间观看',
+            watchLive,
+        ],
     ];
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [cast, name, module] of castTable) {
+    for (const [
+        cast,
+        name,
+        module,
+    ] of castTable) {
         if (cast) {
             try {
                 // eslint-disable-next-line no-await-in-loop
@@ -105,7 +158,7 @@ export default async (cookies: string, config: Config) => {
                     `${name}成功`,
                     `${name}失败`,
                 );
-            } catch (error) {
+            } catch {
                 // nothing to do
             }
         }

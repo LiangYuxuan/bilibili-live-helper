@@ -1,8 +1,10 @@
+/* eslint-disable import-x/no-unused-modules */
+
 import 'dotenv/config';
 import cron from 'node-cron';
 
-import logger from './logger.ts';
 import getCookies from './cookies.ts';
+import logger from './logger.ts';
 import main from './main.ts';
 import pushToPushDeer from './push.ts';
 
@@ -34,13 +36,14 @@ const pushKey = process.env.PUSHKEY ?? '';
 const cronExp = process.env.CRON_EXP ?? '';
 
 const coreHandler = async () => {
-    await main(await getCookies(), config);
+    await main(await getCookies('bilibili.com', 'www.bilibili.com'), config);
 };
 
 const mainHandler = () => {
     coreHandler()
         .catch((error: unknown) => {
             logger.error((error as Error).message);
+            console.error(error);
         })
         .finally(() => {
             if (pushKey.length > 0) {
@@ -50,10 +53,10 @@ const mainHandler = () => {
                         logger.clearPushInfo();
                     })
                     .catch((error: unknown) => {
-                        logger.error((error as Error).message);
+                        console.error(error);
                     });
             } else {
-                logger.warn('未设定PushKey');
+                console.warn('未设定PushKey');
             }
         });
 };
@@ -63,7 +66,7 @@ if (cronExp.length > 0) {
         timezone: 'Asia/Shanghai',
     });
 } else {
-    logger.warn('未设定定时执行表达式');
+    console.warn('未设定定时执行表达式');
 }
 
 mainHandler();

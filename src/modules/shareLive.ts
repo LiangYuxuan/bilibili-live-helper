@@ -1,12 +1,13 @@
-import logger from '../logger.ts';
 import { getRoomInfo, trigerInteract } from '../api.ts';
-import { retry, delay, Medal } from '../utils.ts';
+import logger from '../logger.ts';
+import { retry, delay } from '../utils.ts';
+
+import type { Medal } from '../utils.ts';
 
 export default async (
     cookies: string,
     { medals }: { medals: Medal[] },
 ): Promise<void> => {
-    // eslint-disable-next-line no-restricted-syntax
     for (const medal of medals.filter((value) => value.level < 20)) {
         let { roomID } = medal;
         if (roomID < 10000) {

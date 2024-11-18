@@ -1,5 +1,5 @@
-import logger from '../logger.ts';
 import { doLiveDailySign } from '../api.ts';
+import logger from '../logger.ts';
 
 export default async (cookies: string): Promise<void> => {
     const message = await doLiveDailySign(cookies);

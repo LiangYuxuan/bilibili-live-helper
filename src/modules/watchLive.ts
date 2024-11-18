@@ -1,10 +1,12 @@
-import assert from 'assert';
+import assert from 'node:assert';
 
 import CryptoES from 'crypto-es';
 
-import logger from '../logger.ts';
 import { getRoomInfo, enterRoomHeartbeat, inRoomHeartbeat } from '../api.ts';
-import { retry, delay, Medal } from '../utils.ts';
+import logger from '../logger.ts';
+import { retry, delay } from '../utils.ts';
+
+import type { Medal } from '../utils.ts';
 
 const extractBUVID = (cookies: string): string | undefined => {
     const target = cookies.split(';').filter((value) => /^\s*LIVE_BUVID=/.test(value));
@@ -26,9 +28,13 @@ const calcHeartbeatHMAC = (
 ): string => {
     const data = {
         platform: 'web',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         parent_id: parentAreaID,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         area_id: areaID,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         seq_id: sequence,
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         room_id: roomID,
         buvid,
         uuid,
@@ -71,7 +77,7 @@ const roomHeartbeat = async (
     const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (t) => {
         // eslint-disable-next-line no-bitwise
         const e = 16 * Math.random() | 0;
-        // eslint-disable-next-line no-bitwise, no-mixed-operators
+        // eslint-disable-next-line no-bitwise, @stylistic/no-mixed-operators
         return (t === 'x' ? e : 3 & e | 8).toString(16);
     });
     let sequence = 0;
@@ -79,7 +85,12 @@ const roomHeartbeat = async (
     logger.debug(`Enter Room Heartbeat in ${originRoomID.toString()} (${roomID.toString()})`);
     const result = await enterRoomHeartbeat(
         cookies,
-        JSON.stringify([parentAreaID, areaID, sequence, roomID]),
+        JSON.stringify([
+            parentAreaID,
+            areaID,
+            sequence,
+            roomID,
+        ]),
         JSON.stringify([buvid, uuid]),
         targetID,
         Date.now(),
@@ -118,7 +129,12 @@ const roomHeartbeat = async (
         const res = await inRoomHeartbeat(
             cookies,
             hmac,
-            JSON.stringify([parentAreaID, areaID, sequence, roomID]),
+            JSON.stringify([
+                parentAreaID,
+                areaID,
+                sequence,
+                roomID,
+            ]),
             JSON.stringify([buvid, uuid]),
             targetID,
             timestamp,
@@ -144,7 +160,6 @@ export default async (
     assert(buvid !== undefined, '获取LIVE_BUVID值失败');
 
     const allRooms = [];
-    // eslint-disable-next-line no-restricted-syntax
     for (const medal of medals.filter((value) => value.level < 20)) {
         allRooms.push(
             retry(

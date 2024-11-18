@@ -1,7 +1,9 @@
 import util from 'node:util';
 
+import { getNewDynamic, reportShare } from '../api.ts';
 import logger from '../logger.ts';
-import { getNewDynamic, DynamicCard, reportShare } from '../api.ts';
+
+import type { DynamicCard } from '../api.ts';
 
 export default async (cookies: string, { uid }: { uid: number }): Promise<void> => {
     const dynamics = await getNewDynamic(cookies, uid, 8);

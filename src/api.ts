@@ -1,7 +1,8 @@
-import assert from 'assert';
-import got from 'got';
+/* eslint-disable @typescript-eslint/naming-convention */
 
-const UserAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.93 Safari/537.36';
+import assert from 'node:assert';
+
+import userAgent from './userAgent.ts';
 
 const extractCSRF = (cookies: string): string | undefined => {
     const target = cookies.split(';').filter((value) => /^\s*bili_jct=/.test(value));
@@ -14,19 +15,19 @@ interface APIReturn {
     data: unknown;
 }
 
-export const reportVideoClick = async (cookies: string): Promise<void> => {
-    const result: APIReturn = await got.get('https://api.bilibili.com/x/report/click/now', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-    }).json();
+const reportVideoClick = async (cookies: string): Promise<void> => {
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.bilibili.com/x/report/click/now', { headers });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
 };
 
-export const reportVideoHeartbeat = async (
+const reportVideoHeartbeat = async (
     cookies: string,
     aid: number,
     cid: number,
@@ -42,54 +43,54 @@ export const reportVideoHeartbeat = async (
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.bilibili.com/x/report/web/heartbeat', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-        form: {
-            aid,
-            cid,
-            mid, // uid
-            start_ts,
-            played_time,
-            realtime,
-            type,
-            play_type, // 1: starting, 2: playing
-            dt,
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const body = new URLSearchParams();
+    body.set('aid', aid.toString());
+    body.set('cid', cid.toString());
+    body.set('mid', mid.toString()); // uid
+    body.set('start_ts', start_ts.toString());
+    body.set('played_time', played_time.toString());
+    body.set('realtime', realtime.toString());
+    body.set('type', type.toString());
+    body.set('play_type', play_type.toString()); // 1: starting, 2: playing
+    body.set('dt', dt.toString());
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.bilibili.com/x/report/web/heartbeat', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
 };
 
-export const reportShare = async (cookies: string, aid: number): Promise<string> => {
+const reportShare = async (cookies: string, aid: number): Promise<string> => {
     const csrf = extractCSRF(cookies);
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.bilibili.com/x/web-interface/share/add', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-        form: {
-            aid,
-            jsonp: 'jsonp',
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const body = new URLSearchParams();
+    body.set('aid', aid.toString());
+    body.set('jsonp', 'jsonp');
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    assert(result.code === 0 || result.code === 71000, result.message);
+    const req = await fetch('https://api.bilibili.com/x/web-interface/share/add', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
 
-    return result.message;
+    assert(res.code === 0 || res.code === 71000, res.message);
+
+    return res.message;
 };
 
 interface NavInfo {
@@ -177,18 +178,18 @@ interface NavInfo {
     is_senior_member: number;
 }
 
-export const getNavInfo = async (cookies: string): Promise<NavInfo> => {
-    const result: APIReturn = await got.get('https://api.bilibili.com/x/web-interface/nav', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-    }).json();
+const getNavInfo = async (cookies: string): Promise<NavInfo> => {
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.bilibili.com/x/web-interface/nav', { headers });
+    const res = await req.json() as APIReturn;
 
-    return result.data as NavInfo;
+    assert(res.code === 0, res.message);
+
+    return res.data as NavInfo;
 };
 
 interface PrivilegeData {
@@ -204,40 +205,40 @@ interface PrivilegeData {
     }[];
 }
 
-export const getPrivilege = async (cookies: string): Promise<PrivilegeData> => {
-    const result: APIReturn = await got.get('https://api.bilibili.com/x/vip/privilege/my', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-    }).json();
+const getPrivilege = async (cookies: string): Promise<PrivilegeData> => {
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.bilibili.com/x/vip/privilege/my', { headers });
+    const res = await req.json() as APIReturn;
 
-    return result.data as PrivilegeData;
+    assert(res.code === 0, res.message);
+
+    return res.data as PrivilegeData;
 };
 
-export const receivePrivilege = async (cookies: string, type: number): Promise<void> => {
+const receivePrivilege = async (cookies: string, type: number): Promise<void> => {
     const csrf = extractCSRF(cookies);
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.bilibili.com/x/vip/privilege/receive', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-        form: {
-            type,
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const body = new URLSearchParams();
+    body.set('type', type.toString());
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.bilibili.com/x/vip/privilege/receive', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
 };
 
 interface UserCouponData {
@@ -259,7 +260,7 @@ interface UserCouponData {
     }[];
 }
 
-export const getUserCoupon = async (
+const getUserCoupon = async (
     cookies: string,
     beginTime: string,
     endTime: string,
@@ -267,24 +268,26 @@ export const getUserCoupon = async (
     currentPage = 1,
     pageSize = 10,
 ): Promise<UserCouponData> => {
-    const result: APIReturn = await got.post('https://pay.bilibili.com/paywallet/coupon/listForUserCoupons', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://pay.bilibili.com/pay-v2-web/bcoin_record',
-        },
-        json: {
-            currentPage,
-            pageSize,
-            beginTime,
-            endTime,
-            timestamp,
-        },
-    }).json();
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://pay.bilibili.com/pay-v2-web/bcoin_record');
+    headers.set('Content-Type', 'application/json');
 
-    assert(result.code === 0, result.message);
+    const body = JSON.stringify({
+        currentPage,
+        pageSize,
+        beginTime,
+        endTime,
+        timestamp,
+    });
 
-    return result.data as UserCouponData;
+    const req = await fetch('https://pay.bilibili.com/paywallet/coupon/listForUserCoupons', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
+
+    return res.data as UserCouponData;
 };
 
 interface ElectricMonthData {
@@ -309,24 +312,24 @@ interface ElectricMonthData {
     special_day: number;
 }
 
-export const getElectricMonth = async (
+const getElectricMonth = async (
     cookies: string,
     mid: number,
 ): Promise<ElectricMonthData> => {
-    const result: APIReturn = await got.get('https://api.bilibili.com/x/ugcpay-rank/elec/month/up', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-        searchParams: {
-            up_mid: mid,
-        },
-    }).json();
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const params = new URLSearchParams();
+    params.set('up_mid', mid.toString());
 
-    return result.data as ElectricMonthData;
+    const req = await fetch(`https://api.bilibili.com/x/ugcpay-rank/elec/month/up?${params}`, { headers });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
+
+    return res.data as ElectricMonthData;
 };
 
 interface ElectricPayResultData {
@@ -339,7 +342,7 @@ interface ElectricPayResultData {
     msg: string;
 }
 
-export const doElectricPay = async (
+const doElectricPay = async (
     cookies: string,
     bp_num: number,
     up_mid: number,
@@ -351,30 +354,30 @@ export const doElectricPay = async (
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.bilibili.com/x/ugcpay/web/v2/trade/elec/pay/quick', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-        form: {
-            bp_num,
-            up_mid,
-            otype,
-            oid,
-            is_bp_remains_prior: is_bp_remains_prior ? 'true' : 'false',
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const body = new URLSearchParams();
+    body.set('bp_num', bp_num.toString());
+    body.set('up_mid', up_mid.toString());
+    body.set('otype', otype);
+    body.set('oid', oid.toString());
+    body.set('is_bp_remains_prior', is_bp_remains_prior ? 'true' : 'false');
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.bilibili.com/x/ugcpay/web/v2/trade/elec/pay/quick', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
 
-    return result.data as ElectricPayResultData;
+    assert(res.code === 0, res.message);
+
+    return res.data as ElectricPayResultData;
 };
 
-export const sendElectricMessage = async (
+const sendElectricMessage = async (
     cookies: string,
     order_id: string,
     message: string,
@@ -383,22 +386,22 @@ export const sendElectricMessage = async (
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.bilibili.com/x/ugcpay/trade/elec/message', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-        form: {
-            order_id,
-            message,
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const body = new URLSearchParams();
+    body.set('order_id', order_id);
+    body.set('message', message);
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.bilibili.com/x/ugcpay/trade/elec/message', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
 };
 
 interface BP2GoldData {
@@ -407,22 +410,22 @@ interface BP2GoldData {
     ios_bp: number;
 }
 
-export const getBP2Gold = async (cookies: string, bp: number, t: number): Promise<BP2GoldData> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/xlive/revenue/v1/wallet/bp2Gold', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://link.bilibili.com/',
-        },
-        searchParams: {
-            bp,
-            t,
-        },
-    }).json();
+const getBP2Gold = async (cookies: string, bp: number, t: number): Promise<BP2GoldData> => {
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://link.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const params = new URLSearchParams();
+    params.set('bp', bp.toString());
+    params.set('t', t.toString());
 
-    return result.data as BP2GoldData;
+    const req = await fetch(`https://api.live.bilibili.com/xlive/revenue/v1/wallet/bp2Gold?${params}`, { headers });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
+
+    return res.data as BP2GoldData;
 };
 
 interface OrderData {
@@ -432,7 +435,7 @@ interface OrderData {
     status: number;
 }
 
-export const createOrder = async (
+const createOrder = async (
     cookies: string,
     pay_bp: number,
     common_bp: number,
@@ -448,31 +451,31 @@ export const createOrder = async (
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.live.bilibili.com/xlive/revenue/v1/order/createOrder', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://link.bilibili.com/',
-        },
-        form: {
-            pay_bp,
-            common_bp,
-            ios_bp,
-            goods_type,
-            goods_id,
-            goods_num,
-            context_type,
-            context_id,
-            platform,
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://link.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const body = new URLSearchParams();
+    body.set('pay_bp', pay_bp.toString());
+    body.set('common_bp', common_bp.toString());
+    body.set('ios_bp', ios_bp.toString());
+    body.set('goods_type', goods_type.toString());
+    body.set('goods_id', goods_id.toString());
+    body.set('goods_num', goods_num.toString());
+    body.set('context_type', context_type.toString());
+    body.set('context_id', context_id.toString());
+    body.set('platform', platform);
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.live.bilibili.com/xlive/revenue/v1/order/createOrder', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
 
-    return result.data as OrderData;
+    assert(res.code === 0, res.message);
+
+    return res.data as OrderData;
 };
 
 interface UserInfo {
@@ -493,18 +496,18 @@ interface UserInfo {
     billCoin: number;
 }
 
-export const getUserInfo = async (cookies: string): Promise<UserInfo> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/user/getuserinfo', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-    }).json();
+const getUserInfo = async (cookies: string): Promise<UserInfo> => {
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
 
-    assert(result.code === 'REPONSE_OK', result.message);
+    const req = await fetch('https://api.live.bilibili.com/user/getuserinfo', { headers });
+    const res = await req.json() as APIReturn;
 
-    return result.data as UserInfo;
+    assert(res.code === 'REPONSE_OK', res.message);
+
+    return res.data as UserInfo;
 };
 
 interface DynamicData {
@@ -691,7 +694,7 @@ interface DynamicData {
     _gt_: number;
 }
 
-export interface DynamicCard {
+interface DynamicCard {
     aid: number;
     attribute: number;
     cid: number;
@@ -751,43 +754,43 @@ export interface DynamicCard {
     videos: number;
 }
 
-export const getNewDynamic = async (
+const getNewDynamic = async (
     cookies: string,
     uid: number,
     type = 8,
 ): Promise<DynamicData> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-        searchParams: {
-            uid,
-            type,
-        },
-    }).json();
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const params = new URLSearchParams();
+    params.set('uid', uid.toString());
+    params.set('type', type.toString());
 
-    return result.data as DynamicData;
+    const req = await fetch(`https://api.live.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new?${params}`, { headers });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
+
+    return res.data as DynamicData;
 };
 
-export const doLiveDailySign = async (cookies: string): Promise<string> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/xlive/web-ucenter/v1/sign/DoSign', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-    }).json();
+const doLiveDailySign = async (cookies: string): Promise<string> => {
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
 
-    assert(result.code === 0 || result.code === 1011040, result.message);
+    const req = await fetch('https://api.live.bilibili.com/xlive/web-ucenter/v1/sign/DoSign', { headers });
+    const res = await req.json() as APIReturn;
 
-    return result.message;
+    assert(res.code === 0 || res.code === 1011040, res.message);
+
+    return res.message;
 };
 
-export interface FansMedal {
+interface FansMedal {
     can_deleted: boolean;
     day_limit: number;
     guard_level: number;
@@ -809,7 +812,7 @@ export interface FansMedal {
     uname: string;
 }
 
-export interface MedalList {
+interface MedalList {
     count: number;
     page_info: {
         cur_page: number;
@@ -818,26 +821,26 @@ export interface MedalList {
     items: FansMedal[];
 }
 
-export const getMedalList = async (
+const getMedalList = async (
     cookies: string,
     page = 1,
     page_size = 10,
 ): Promise<MedalList> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/xlive/app-ucenter/v1/user/GetMyMedals', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-        searchParams: {
-            page,
-            page_size,
-        },
-    }).json();
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const params = new URLSearchParams();
+    params.set('page', page.toString());
+    params.set('pageSize', page_size.toString());
 
-    return result.data as MedalList;
+    const req = await fetch(`https://api.live.bilibili.com/xlive/app-ucenter/v1/user/GetMyMedals?${params}`, { headers });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
+
+    return res.data as MedalList;
 };
 
 interface GroupInfo {
@@ -856,18 +859,18 @@ interface GroupInfo {
     }[];
 }
 
-export const getGroupList = async (cookies: string): Promise<GroupInfo> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/link_group/v1/member/my_groups', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-    }).json();
+const getGroupList = async (cookies: string): Promise<GroupInfo> => {
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.live.bilibili.com/link_group/v1/member/my_groups', { headers });
+    const res = await req.json() as APIReturn;
 
-    return result.data as GroupInfo;
+    assert(res.code === 0, res.message);
+
+    return res.data as GroupInfo;
 };
 
 interface GroupSignInfo {
@@ -876,26 +879,26 @@ interface GroupSignInfo {
     _gt_: number;
 }
 
-export const doGroupSign = async (
+const doGroupSign = async (
     cookies: string,
     group_id: number,
     owner_id: number,
 ): Promise<GroupSignInfo> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/link_setting/v1/link_setting/sign_in', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-        searchParams: {
-            group_id,
-            owner_id,
-        },
-    }).json();
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const params = new URLSearchParams();
+    params.set('group_id', group_id.toString());
+    params.set('owner_id', owner_id.toString());
 
-    return result.data as GroupSignInfo;
+    const req = await fetch(`https://api.live.bilibili.com/link_setting/v1/link_setting/sign_in?${params}`, { headers });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
+
+    return res.data as GroupSignInfo;
 };
 
 interface WearedMedal {
@@ -961,72 +964,74 @@ interface WearedMedal {
     };
 }
 
-export const getWearedMedal = async (cookies: string): Promise<WearedMedal | undefined> => {
+const getWearedMedal = async (cookies: string): Promise<WearedMedal | undefined> => {
     const csrf = extractCSRF(cookies);
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.live.bilibili.com/live_user/v1/UserInfo/get_weared_medal', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-        form: {
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-    assert(result.code === 0, result.message);
+    const body = new URLSearchParams();
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    if (result.data instanceof Array) {
+    const req = await fetch('https://api.live.bilibili.com/live_user/v1/UserInfo/get_weared_medal', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
+
+    if (res.data instanceof Array) {
         return undefined;
     }
 
-    return result.data as WearedMedal;
+    return res.data as WearedMedal;
 };
 
-export const wearMedal = async (cookies: string, medalID: number): Promise<void> => {
+const wearMedal = async (cookies: string, medalID: number): Promise<void> => {
     const csrf = extractCSRF(cookies);
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.live.bilibili.com/xlive/web-room/v1/fansMedal/wear', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-        form: {
-            medal_id: medalID,
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const body = new URLSearchParams();
+    body.set('medal_id', medalID.toString());
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.live.bilibili.com/xlive/web-room/v1/fansMedal/wear', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
 };
 
-export const takeOffMedal = async (cookies: string): Promise<void> => {
+const takeOffMedal = async (cookies: string): Promise<void> => {
     const csrf = extractCSRF(cookies);
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.live.bilibili.com/xlive/web-room/v1/fansMedal/take_off', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-        form: {
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-    assert(result.code === 0, result.message);
+    const body = new URLSearchParams();
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
+
+    const req = await fetch('https://api.live.bilibili.com/xlive/web-room/v1/fansMedal/take_off', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
 };
 
 interface RoomInfo {
@@ -1102,50 +1107,50 @@ interface RoomInfo {
     };
 }
 
-export const getRoomInfo = async (cookies: string, room_id: number, from = 'room'): Promise<RoomInfo> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/room/v1/Room/get_info', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-        searchParams: {
-            room_id,
-            from,
-        },
-    }).json();
+const getRoomInfo = async (cookies: string, room_id: number, from = 'room'): Promise<RoomInfo> => {
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const params = new URLSearchParams();
+    params.set('room_id', room_id.toString());
+    params.set('from', from);
 
-    return result.data as RoomInfo;
+    const req = await fetch(`https://api.live.bilibili.com/room/v1/Room/get_info?${params}`, { headers });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
+
+    return res.data as RoomInfo;
 };
 
-export const sendDanmu = async (cookies: string, msg: string, roomid: number, color = '16777215', fontsize = 25, mode = 1, bubble = 0): Promise<void> => {
+const sendDanmu = async (cookies: string, msg: string, roomid: number, color = '16777215', fontsize = 25, mode = 1, bubble = 0): Promise<void> => {
     const csrf = extractCSRF(cookies);
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.live.bilibili.com/msg/send', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-        form: {
-            msg,
-            roomid,
-            color,
-            fontsize,
-            mode,
-            bubble,
-            rnd: Math.round(Date.now() / 1000),
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const body = new URLSearchParams();
+    body.set('msg', msg);
+    body.set('roomid', roomid.toString());
+    body.set('color', color);
+    body.set('fontsize', fontsize.toString());
+    body.set('mode', mode.toString());
+    body.set('bubble', bubble.toString());
+    body.set('rnd', Math.round(Date.now() / 1000).toString());
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    assert(result.code === 0 && result.message.length === 0, result.message);
+    const req = await fetch('https://api.live.bilibili.com/msg/send', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0 && res.message.length === 0, res.message);
 };
 
 interface GiftBagList {
@@ -1168,18 +1173,18 @@ interface GiftBagList {
     time: number,
 }
 
-export const getGiftBagList = async (cookies: string): Promise<GiftBagList> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/gift/v2/gift/bag_list', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-    }).json();
+const getGiftBagList = async (cookies: string): Promise<GiftBagList> => {
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.live.bilibili.com/gift/v2/gift/bag_list', { headers });
+    const res = await req.json() as APIReturn;
 
-    return result.data as GiftBagList;
+    assert(res.code === 0, res.message);
+
+    return res.data as GiftBagList;
 };
 
 interface GiftInfo {
@@ -1232,18 +1237,18 @@ interface GiftInfo {
     left_corner_background: string;
 }
 
-export const getGiftConfig = async (cookies: string): Promise<GiftInfo[]> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/gift/v3/live/gift_config', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-    }).json();
+const getGiftConfig = async (cookies: string): Promise<GiftInfo[]> => {
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.live.bilibili.com/gift/v3/live/gift_config', { headers });
+    const res = await req.json() as APIReturn;
 
-    return result.data as GiftInfo[];
+    assert(res.code === 0, res.message);
+
+    return res.data as GiftInfo[];
 };
 
 interface RoomInitInfo {
@@ -1265,24 +1270,24 @@ interface RoomInitInfo {
     special_type: number;
 }
 
-export const doRoomInit = async (cookies: string, roomID: number): Promise<RoomInitInfo> => {
-    const result: APIReturn = await got.get('https://api.live.bilibili.com/room/v1/Room/room_init', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://live.bilibili.com/',
-        },
-        searchParams: {
-            id: roomID,
-        },
-    }).json();
+const doRoomInit = async (cookies: string, roomID: number): Promise<RoomInitInfo> => {
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://live.bilibili.com/');
 
-    assert(result.code === 0, result.message);
+    const params = new URLSearchParams();
+    params.set('id', roomID.toString());
 
-    return result.data as RoomInitInfo;
+    const req = await fetch(`https://api.live.bilibili.com/room/v1/Room/room_init?${params}`, { headers });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
+
+    return res.data as RoomInitInfo;
 };
 
-export const sendGiftBag = async (
+const sendGiftBag = async (
     cookies: string,
     uid: number,
     gift_id: number,
@@ -1300,31 +1305,31 @@ export const sendGiftBag = async (
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.live.bilibili.com/xlive/revenue/v1/gift/sendBag', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-        form: {
-            uid,
-            gift_id,
-            ruid,
-            gift_num,
-            bag_id,
-            biz_id, // roomID
-            rnd,
-            platform,
-            biz_code,
-            storm_beat_id,
-            price,
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const body = new URLSearchParams();
+    body.set('uid', uid.toString());
+    body.set('gift_id', gift_id.toString());
+    body.set('ruid', ruid.toString());
+    body.set('gift_num', gift_num.toString());
+    body.set('bag_id', bag_id.toString());
+    body.set('biz_id', biz_id.toString()); // roomID
+    body.set('rnd', rnd.toString());
+    body.set('platform', platform);
+    body.set('biz_code', biz_code);
+    body.set('storm_beat_id', storm_beat_id.toString());
+    body.set('price', price.toString());
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.live.bilibili.com/xlive/revenue/v1/gift/sendBag', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
 };
 
 interface EnterRoomReturn {
@@ -1335,7 +1340,7 @@ interface EnterRoomReturn {
     patch_status: number,
 }
 
-export const enterRoomHeartbeat = async (
+const enterRoomHeartbeat = async (
     cookies: string,
     id: string,
     device: string,
@@ -1348,31 +1353,30 @@ export const enterRoomHeartbeat = async (
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://live-trace.bilibili.com/xlive/data-interface/v1/x25Kn/E', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-        form: {
-            id,
-            device,
-            ruid,
-            ts,
-            is_patch,
-            heart_beat,
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            ua: UserAgent,
-            visit_id: '',
+    const body = new URLSearchParams();
+    body.set('id', id);
+    body.set('device', device);
+    body.set('ruid', ruid.toString());
+    body.set('ts', ts.toString());
+    body.set('is_patch', is_patch.toString());
+    body.set('heart_beat', heart_beat);
+    body.set('ua', userAgent);
+    body.set('visit_id', '');
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const req = await fetch('https://live-trace.bilibili.com/xlive/data-interface/v1/x25Kn/E', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
 
-    assert(result.code === 0, result.message);
+    assert(res.code === 0, res.message);
 
-    return result.data as EnterRoomReturn;
+    return res.data as EnterRoomReturn;
 };
 
 interface InRoomReturn {
@@ -1382,7 +1386,7 @@ interface InRoomReturn {
     secret_rule: number[],
 }
 
-export const inRoomHeartbeat = async (
+const inRoomHeartbeat = async (
     cookies: string,
     s: string,
     id: string,
@@ -1397,59 +1401,58 @@ export const inRoomHeartbeat = async (
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://live-trace.bilibili.com/xlive/data-interface/v1/x25Kn/X', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-        form: {
-            s,
-            id,
-            device,
-            ruid,
-            ets,
-            benchmark,
-            time,
-            ts,
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            ua: UserAgent,
-            visit_id: '',
+    const body = new URLSearchParams();
+    body.set('s', s);
+    body.set('id', id);
+    body.set('device', device);
+    body.set('ruid', ruid.toString());
+    body.set('ets', ets.toString());
+    body.set('benchmark', benchmark);
+    body.set('time', time.toString());
+    body.set('ts', ts.toString());
+    body.set('ua', userAgent);
+    body.set('visit_id', '');
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const req = await fetch('https://live-trace.bilibili.com/xlive/data-interface/v1/x25Kn/X', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
 
-    assert(result.code === 0, result.message);
+    assert(res.code === 0, res.message);
 
-    return result.data as InRoomReturn;
+    return res.data as InRoomReturn;
 };
 
-export const trigerInteract = async (cookies: string, roomid: number): Promise<void> => {
+const trigerInteract = async (cookies: string, roomid: number): Promise<void> => {
     const csrf = extractCSRF(cookies);
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.live.bilibili.com/xlive/web-room/v1/index/TrigerInteract', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-        form: {
-            roomid,
-            interact_type: 3,
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const body = new URLSearchParams();
+    body.set('roomid', roomid.toString());
+    body.set('interact_type', '3');
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.live.bilibili.com/xlive/web-room/v1/index/TrigerInteract', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
 };
 
-export const likeInteract = async (
+const likeInteract = async (
     cookies: string,
     roomid: number,
     uid: number,
@@ -1459,21 +1462,61 @@ export const likeInteract = async (
 
     assert(csrf !== undefined, '获取CSRF值失败');
 
-    const result: APIReturn = await got.post('https://api.live.bilibili.com/xlive/web-ucenter/v1/interact/likeInteract', {
-        headers: {
-            'User-Agent': UserAgent,
-            Cookie: cookies,
-            Referer: 'https://www.bilibili.com/',
-        },
-        form: {
-            roomid,
-            uid,
-            ts,
+    const headers = new Headers();
+    headers.set('User-Agent', userAgent);
+    headers.set('Cookie', cookies);
+    headers.set('Referer', 'https://www.bilibili.com/');
+    headers.set('Content-Type', 'application/x-www-form-urlencoded');
 
-            csrf,
-            csrf_token: csrf,
-        },
-    }).json();
+    const body = new URLSearchParams();
+    body.set('roomid', roomid.toString());
+    body.set('uid', uid.toString());
+    body.set('ts', ts.toString());
+    body.set('csrf', csrf);
+    body.set('csrf_token', csrf);
 
-    assert(result.code === 0, result.message);
+    const req = await fetch('https://api.live.bilibili.com/xlive/web-ucenter/v1/interact/likeInteract', { method: 'POST', headers, body });
+    const res = await req.json() as APIReturn;
+
+    assert(res.code === 0, res.message);
+};
+
+export {
+    reportVideoClick,
+    reportVideoHeartbeat,
+    reportShare,
+    getNavInfo,
+    getPrivilege,
+    receivePrivilege,
+    getUserCoupon,
+    getElectricMonth,
+    doElectricPay,
+    sendElectricMessage,
+    getBP2Gold,
+    createOrder,
+    getUserInfo,
+    getNewDynamic,
+    doLiveDailySign,
+    getMedalList,
+    getGroupList,
+    doGroupSign,
+    getWearedMedal,
+    wearMedal,
+    takeOffMedal,
+    getRoomInfo,
+    sendDanmu,
+    getGiftBagList,
+    getGiftConfig,
+    doRoomInit,
+    sendGiftBag,
+    enterRoomHeartbeat,
+    inRoomHeartbeat,
+    trigerInteract,
+    likeInteract,
+};
+
+export type {
+    DynamicCard,
+    FansMedal,
+    MedalList,
 };

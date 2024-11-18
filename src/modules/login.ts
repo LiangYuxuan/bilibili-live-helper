@@ -1,5 +1,5 @@
-import { reportVideoClick } from '../api.ts';
+import { getNavInfo } from '../api.ts';
 
 export default async (cookies: string): Promise<void> => {
-    await reportVideoClick(cookies);
+    await getNavInfo(cookies);
 };

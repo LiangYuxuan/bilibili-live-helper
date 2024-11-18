@@ -833,7 +833,7 @@ const getMedalList = async (
 
     const params = new URLSearchParams();
     params.set('page', page.toString());
-    params.set('pageSize', page_size.toString());
+    params.set('page_size', page_size.toString());
 
     const req = await fetch(`https://api.live.bilibili.com/xlive/app-ucenter/v1/user/GetMyMedals?${params}`, { headers });
     const res = await req.json() as APIReturn;

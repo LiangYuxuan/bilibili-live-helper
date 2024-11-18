@@ -15,18 +15,6 @@ interface APIReturn {
     data: unknown;
 }
 
-const reportVideoClick = async (cookies: string): Promise<void> => {
-    const headers = new Headers();
-    headers.set('User-Agent', userAgent);
-    headers.set('Cookie', cookies);
-    headers.set('Referer', 'https://www.bilibili.com/');
-
-    const req = await fetch('https://api.bilibili.com/x/report/click/now', { headers });
-    const res = await req.json() as APIReturn;
-
-    assert(res.code === 0, res.message);
-};
-
 const reportVideoHeartbeat = async (
     cookies: string,
     aid: number,
@@ -402,30 +390,6 @@ const sendElectricMessage = async (
     const res = await req.json() as APIReturn;
 
     assert(res.code === 0, res.message);
-};
-
-interface BP2GoldData {
-    common_bp: number;
-    gold: number;
-    ios_bp: number;
-}
-
-const getBP2Gold = async (cookies: string, bp: number, t: number): Promise<BP2GoldData> => {
-    const headers = new Headers();
-    headers.set('User-Agent', userAgent);
-    headers.set('Cookie', cookies);
-    headers.set('Referer', 'https://link.bilibili.com/');
-
-    const params = new URLSearchParams();
-    params.set('bp', bp.toString());
-    params.set('t', t.toString());
-
-    const req = await fetch(`https://api.live.bilibili.com/xlive/revenue/v1/wallet/bp2Gold?${params}`, { headers });
-    const res = await req.json() as APIReturn;
-
-    assert(res.code === 0, res.message);
-
-    return res.data as BP2GoldData;
 };
 
 interface OrderData {
@@ -1482,7 +1446,6 @@ const likeInteract = async (
 };
 
 export {
-    reportVideoClick,
     reportVideoHeartbeat,
     reportShare,
     getNavInfo,
@@ -1492,7 +1455,6 @@ export {
     getElectricMonth,
     doElectricPay,
     sendElectricMessage,
-    getBP2Gold,
     createOrder,
     getUserInfo,
     getNewDynamic,

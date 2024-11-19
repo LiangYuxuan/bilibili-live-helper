@@ -104,7 +104,7 @@ const roomHeartbeat = async (
     let { timestamp } = result;
     let key = result.secret_key;
     let rules = result.secret_rule;
-    while (duration < 65 * 60) { // 65 minutes
+    while (duration < 25 * 60) { // 25 minutes
         // eslint-disable-next-line no-await-in-loop
         await delay(nextTime * 1000);
         duration += nextTime;
@@ -159,24 +159,17 @@ export default async (
 
     assert(buvid !== undefined, '获取LIVE_BUVID值失败');
 
-    const allRooms = [];
     for (const medal of medals.filter((value) => value.level < 20)) {
-        allRooms.push(
-            retry(
-                () => {
-                    logger.info(`开始观看直播间 ${medal.targetName} (${medal.roomID.toString()})`);
-                    return roomHeartbeat(cookies, buvid, medal.roomID, medal.targetID);
-                },
-                3,
-                1000,
-                `观看直播间 ${medal.targetName} (${medal.roomID.toString()}) 完成`,
-                `观看直播间 ${medal.targetName} (${medal.roomID.toString()}) 失败`,
-            ),
-        );
-
         // eslint-disable-next-line no-await-in-loop
-        await delay(1000);
+        await retry(
+            () => {
+                logger.info(`开始观看直播间 ${medal.targetName} (${medal.roomID.toString()})`);
+                return roomHeartbeat(cookies, buvid, medal.roomID, medal.targetID);
+            },
+            3,
+            1000,
+            `观看直播间 ${medal.targetName} (${medal.roomID.toString()}) 完成`,
+            `观看直播间 ${medal.targetName} (${medal.roomID.toString()}) 失败`,
+        );
     }
-
-    await Promise.all(allRooms);
 };

@@ -15,72 +15,6 @@ interface APIReturn {
     data: unknown;
 }
 
-const reportVideoHeartbeat = async (
-    cookies: string,
-    aid: number,
-    cid: number,
-    mid: number,
-    start_ts: number,
-    played_time = 0,
-    realtime = 0,
-    type = 3,
-    play_type = 1,
-    dt = 2,
-): Promise<void> => {
-    const csrf = extractCSRF(cookies);
-
-    assert(csrf !== undefined, '获取CSRF值失败');
-
-    const headers = new Headers();
-    headers.set('User-Agent', userAgent);
-    headers.set('Cookie', cookies);
-    headers.set('Referer', 'https://www.bilibili.com/');
-    headers.set('Content-Type', 'application/x-www-form-urlencoded');
-
-    const body = new URLSearchParams();
-    body.set('aid', aid.toString());
-    body.set('cid', cid.toString());
-    body.set('mid', mid.toString()); // uid
-    body.set('start_ts', start_ts.toString());
-    body.set('played_time', played_time.toString());
-    body.set('realtime', realtime.toString());
-    body.set('type', type.toString());
-    body.set('play_type', play_type.toString()); // 1: starting, 2: playing
-    body.set('dt', dt.toString());
-    body.set('csrf', csrf);
-    body.set('csrf_token', csrf);
-
-    const req = await fetch('https://api.bilibili.com/x/report/web/heartbeat', { method: 'POST', headers, body });
-    const res = await req.json() as APIReturn;
-
-    assert(res.code === 0, res.message);
-};
-
-const reportShare = async (cookies: string, aid: number): Promise<string> => {
-    const csrf = extractCSRF(cookies);
-
-    assert(csrf !== undefined, '获取CSRF值失败');
-
-    const headers = new Headers();
-    headers.set('User-Agent', userAgent);
-    headers.set('Cookie', cookies);
-    headers.set('Referer', 'https://www.bilibili.com/');
-    headers.set('Content-Type', 'application/x-www-form-urlencoded');
-
-    const body = new URLSearchParams();
-    body.set('aid', aid.toString());
-    body.set('jsonp', 'jsonp');
-    body.set('csrf', csrf);
-    body.set('csrf_token', csrf);
-
-    const req = await fetch('https://api.bilibili.com/x/web-interface/share/add', { method: 'POST', headers, body });
-    const res = await req.json() as APIReturn;
-
-    assert(res.code === 0 || res.code === 71000, res.message);
-
-    return res.message;
-};
-
 interface NavInfo {
     isLogin: boolean;
     email_verified: number;
@@ -474,272 +408,6 @@ const getUserInfo = async (cookies: string): Promise<UserInfo> => {
     return res.data as UserInfo;
 };
 
-interface DynamicData {
-    new_num: number;
-    exist_gap: number;
-    update_num: number;
-    open_rcmd: number;
-    cards: {
-        desc: {
-            uid: number;
-            type: number;
-            rid: number;
-            acl: number;
-            view: number;
-            repost: number;
-            like: number;
-            is_liked: number;
-            dynamic_id: unknown;
-            timestamp: number;
-            pre_dy_id: number;
-            orig_dy_id: number;
-            orig_type: number;
-            user_profile: {
-                info: {
-                    uid: number;
-                    uname: string;
-                    face: string;
-                    face_nft: number;
-                };
-                card: {
-                    official_verify: {
-                        type: number;
-                        desc: string;
-                    };
-                };
-                vip: {
-                    vipType: number;
-                    vipDueDate: unknown;
-                    vipStatus: number;
-                    themeType: number;
-                    label: {
-                        path: string;
-                        text: string;
-                        label_theme: string;
-                        text_color: string;
-                        bg_style: number;
-                        bg_color: string;
-                        border_color: string;
-                    };
-                    avatar_subscript: number;
-                    nickname_color: string;
-                    role: number;
-                    avatar_subscript_url: string;
-                };
-                pendant: {
-                    pid: number;
-                    name: string;
-                    image: string;
-                    expire: number;
-                    image_enhance: string;
-                    image_enhance_frame: string;
-                };
-                rank: string;
-                sign: string;
-                level_info: {
-                    current_level: number;
-                };
-                decorate_card: {
-                    mid: number;
-                    id: number;
-                    card_url: string;
-                    card_type: number;
-                    name: string;
-                    expire_time: number;
-                    card_type_name: string;
-                    uid: number;
-                    item_id: number;
-                    item_type: number;
-                    big_card_url: string;
-                    jump_url: string;
-                    fan: {
-                        is_fan: number;
-                        number: number;
-                        color: string;
-                        num_desc: string;
-                    };
-                    image_enhance: string;
-                };
-            };
-            uid_type: number;
-            stype: number;
-            r_type: number;
-            inner_id: number;
-            status: number;
-            dynamic_id_str: string;
-            pre_dy_id_str: string;
-            orig_dy_id_str: string;
-            rid_str: string;
-            bvid: string;
-        };
-        card: string;
-        extend_json: string;
-        display: {
-            topic_info: {
-                topic_details: {
-                    topic_id: number;
-                    topic_name: string;
-                    is_activity: number;
-                    topic_link: string;
-                }[];
-                new_topic: {
-                    id: number;
-                    name: string;
-                    link: string;
-                };
-            };
-            usr_action_txt: string;
-            relation: {
-                status: number;
-                is_follow: number;
-                is_followed: number;
-            };
-            comment_info: {
-                comments: {
-                    uid: number;
-                    name: string;
-                    content: string;
-                }[];
-                comment_ids: string;
-                emojis: {
-                    emoji_name: string;
-                    url: string;
-                    meta: {
-                        size: number;
-                    };
-                }[];
-            };
-            show_tip: {
-                del_tip: string;
-            };
-            cover_play_icon_url: string;
-            biz_info: {
-                archive: {
-                    season_info: {
-                        text: string;
-                        color: string;
-                        font: string;
-                        season_id: number;
-                    };
-                };
-            };
-            tags: {
-                tag_type: number;
-                sub_type: number;
-                icon: string;
-                text: string;
-                link: string;
-                sub_module: string;
-            }[];
-            like_info: {
-                display_text: string;
-                like_users: {
-                    uid: number;
-                    uname: string;
-                }[];
-            };
-        };
-        activity_infos: {
-            details: {
-                type: number;
-                detail: string;
-            }[];
-        };
-    }[];
-    attentions: {
-        uids: number[];
-        bangumis: {
-            season_id: number;
-            type: number;
-        }[];
-    };
-    max_dynamic_id: number;
-    history_offset: number;
-    _gt_: number;
-}
-
-interface DynamicCard {
-    aid: number;
-    attribute: number;
-    cid: number;
-    copyright: number;
-    ctime: number;
-    desc: string;
-    dimension: {
-        height: number;
-        rotate: number;
-        width: number;
-    };
-    duration: number;
-    dynamic: string;
-    first_frame: string;
-    jump_url: string;
-    owner: {
-        face: string;
-        mid: number;
-        name: string;
-    };
-    pic: string;
-    player_info?: unknown;
-    pubdate: number;
-    rights: {
-        autoplay: number;
-        bp: number;
-        download: number;
-        elec: number;
-        hd5: number;
-        is_cooperation: number;
-        movie: number;
-        no_background: number;
-        no_reprint: number;
-        pay: number;
-        ugc_pay: number;
-        ugc_pay_preview: number;
-    };
-    short_link: string;
-    short_link_v2: string;
-    stat: {
-        aid: number;
-        coin: number;
-        danmaku: number;
-        dislike: number;
-        favorite: number;
-        his_rank: number;
-        like: number;
-        now_rank: number;
-        reply: number;
-        share: number;
-        view: number;
-    };
-    state: number;
-    tid: number;
-    title: string;
-    tname: string;
-    videos: number;
-}
-
-const getNewDynamic = async (
-    cookies: string,
-    uid: number,
-    type = 8,
-): Promise<DynamicData> => {
-    const headers = new Headers();
-    headers.set('User-Agent', userAgent);
-    headers.set('Cookie', cookies);
-    headers.set('Referer', 'https://live.bilibili.com/');
-
-    const params = new URLSearchParams();
-    params.set('uid', uid.toString());
-    params.set('type', type.toString());
-
-    const req = await fetch(`https://api.live.bilibili.com/dynamic_svr/v1/dynamic_svr/dynamic_new?${params}`, { headers });
-    const res = await req.json() as APIReturn;
-
-    assert(res.code === 0, res.message);
-
-    return res.data as DynamicData;
-};
-
 const doLiveDailySign = async (cookies: string): Promise<string> => {
     const headers = new Headers();
     headers.set('User-Agent', userAgent);
@@ -805,64 +473,6 @@ const getMedalList = async (
     assert(res.code === 0, res.message);
 
     return res.data as MedalList;
-};
-
-interface GroupInfo {
-    list: {
-        group_id: number;
-        owner_uid: number;
-        group_type: number;
-        group_level: number;
-        group_cover: string;
-        group_name: string;
-        group_notice: string;
-        group_status: number;
-        room_id: number;
-        is_living: number;
-        fans_medal_name: string;
-    }[];
-}
-
-const getGroupList = async (cookies: string): Promise<GroupInfo> => {
-    const headers = new Headers();
-    headers.set('User-Agent', userAgent);
-    headers.set('Cookie', cookies);
-    headers.set('Referer', 'https://live.bilibili.com/');
-
-    const req = await fetch('https://api.live.bilibili.com/link_group/v1/member/my_groups', { headers });
-    const res = await req.json() as APIReturn;
-
-    assert(res.code === 0, res.message);
-
-    return res.data as GroupInfo;
-};
-
-interface GroupSignInfo {
-    add_num: number;
-    status: number;
-    _gt_: number;
-}
-
-const doGroupSign = async (
-    cookies: string,
-    group_id: number,
-    owner_id: number,
-): Promise<GroupSignInfo> => {
-    const headers = new Headers();
-    headers.set('User-Agent', userAgent);
-    headers.set('Cookie', cookies);
-    headers.set('Referer', 'https://live.bilibili.com/');
-
-    const params = new URLSearchParams();
-    params.set('group_id', group_id.toString());
-    params.set('owner_id', owner_id.toString());
-
-    const req = await fetch(`https://api.live.bilibili.com/link_setting/v1/link_setting/sign_in?${params}`, { headers });
-    const res = await req.json() as APIReturn;
-
-    assert(res.code === 0, res.message);
-
-    return res.data as GroupSignInfo;
 };
 
 interface WearedMedal {
@@ -1446,8 +1056,6 @@ const likeInteract = async (
 };
 
 export {
-    reportVideoHeartbeat,
-    reportShare,
     getNavInfo,
     getPrivilege,
     receivePrivilege,
@@ -1457,11 +1065,8 @@ export {
     sendElectricMessage,
     createOrder,
     getUserInfo,
-    getNewDynamic,
     doLiveDailySign,
     getMedalList,
-    getGroupList,
-    doGroupSign,
     getWearedMedal,
     wearMedal,
     takeOffMedal,
@@ -1478,7 +1083,6 @@ export {
 };
 
 export type {
-    DynamicCard,
     FansMedal,
     MedalList,
 };

@@ -5,14 +5,11 @@ import logger from './logger.ts';
 import danmu from './modules/danmu.ts';
 import getCoupon from './modules/getCoupon.ts';
 import gift from './modules/gift.ts';
-import groupSignIn from './modules/groupSignin.ts';
 import likeLive from './modules/likeLive.ts';
 import login from './modules/login.ts';
-import share from './modules/share.ts';
 import shareLive from './modules/shareLive.ts';
 import signin from './modules/signin.ts';
 import useCoupon from './modules/useCoupon.ts';
-import watch from './modules/watch.ts';
 import watchLive from './modules/watchLive.ts';
 import { retry, getFullMedalList } from './utils.ts';
 
@@ -20,10 +17,7 @@ import type { Medal } from './utils.ts';
 
 interface Config {
     login: boolean,
-    watchVideo: boolean,
-    shareVideo: boolean,
     liveDailySign: boolean,
-    groupDailySign: boolean,
     medalDanmu: boolean,
     medalDanmuContent: string[],
     sendGift: boolean,
@@ -76,16 +70,6 @@ export default async (cookies: string, config: Config) => {
             login,
         ],
         [
-            config.watchVideo,
-            '主站观看视频',
-            watch,
-        ],
-        [
-            config.shareVideo,
-            '主站分享视频',
-            share,
-        ],
-        [
             config.getCoupon,
             '领取B币卷',
             getCoupon,
@@ -99,11 +83,6 @@ export default async (cookies: string, config: Config) => {
             config.liveDailySign,
             '直播区签到',
             signin,
-        ],
-        [
-            config.groupDailySign,
-            '应援团签到',
-            groupSignIn,
         ],
         [
             config.medalDanmu,

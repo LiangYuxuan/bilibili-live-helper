@@ -24,10 +24,7 @@ const config = {
     watchLive: !!parseInt(process.env.WATCH_LIVE ?? '', 10),
     getCoupon: !!parseInt(process.env.GET_COUPON ?? '', 10),
     useCoupon: !!parseInt(process.env.USE_COUPON ?? '', 10),
-    useCouponMode: Number.isNaN(parseInt(process.env.USE_COUPON_MODE ?? '', 10)) ? 1 : parseInt(process.env.USE_COUPON_MODE ?? '', 10),
     useCouponTime: Number.isNaN(parseInt(process.env.USE_COUPON_TIME ?? '', 10)) ? 1 : parseInt(process.env.USE_COUPON_TIME ?? '', 10),
-    useCouponRest: !!parseInt(process.env.USE_COUPON_REST ?? '', 10),
-    chargeMsg: process.env.CHARGE_MSG ?? '',
 };
 const pushKey = process.env.PUSHKEY ?? '';
 const cronExp = process.env.CRON_EXP ?? '';

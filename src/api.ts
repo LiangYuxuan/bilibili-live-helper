@@ -212,120 +212,6 @@ const getUserCoupon = async (
     return res.data as UserCouponData;
 };
 
-interface ElectricMonthData {
-    count: number;
-    list: {
-        uname: string;
-        avatar: string;
-        mid: number;
-        pay_mid: number;
-        rank: number;
-        trend_type: number;
-        vip_info: {
-            vipDueMsec: number;
-            vipStatus: number;
-            vipType: number;
-        };
-        message: string;
-        message_hidden: number;
-    }[];
-    total_count: number;
-    total: number;
-    special_day: number;
-}
-
-const getElectricMonth = async (
-    cookies: string,
-    mid: number,
-): Promise<ElectricMonthData> => {
-    const headers = new Headers();
-    headers.set('User-Agent', userAgent);
-    headers.set('Cookie', cookies);
-    headers.set('Referer', 'https://www.bilibili.com/');
-
-    const params = new URLSearchParams();
-    params.set('up_mid', mid.toString());
-
-    const req = await fetch(`https://api.bilibili.com/x/ugcpay-rank/elec/month/up?${params}`, { headers });
-    const res = await req.json() as APIReturn;
-
-    assert(res.code === 0, res.message);
-
-    return res.data as ElectricMonthData;
-};
-
-interface ElectricPayResultData {
-    mid: number;
-    up_mid: number;
-    order_no: string;
-    bp_num: number;
-    exp: number;
-    status: number;
-    msg: string;
-}
-
-const doElectricPay = async (
-    cookies: string,
-    bp_num: number,
-    up_mid: number,
-    otype: string,
-    oid: number,
-    is_bp_remains_prior = true,
-): Promise<ElectricPayResultData> => {
-    const csrf = extractCSRF(cookies);
-
-    assert(csrf !== undefined, '获取CSRF值失败');
-
-    const headers = new Headers();
-    headers.set('User-Agent', userAgent);
-    headers.set('Cookie', cookies);
-    headers.set('Referer', 'https://www.bilibili.com/');
-    headers.set('Content-Type', 'application/x-www-form-urlencoded');
-
-    const body = new URLSearchParams();
-    body.set('bp_num', bp_num.toString());
-    body.set('up_mid', up_mid.toString());
-    body.set('otype', otype);
-    body.set('oid', oid.toString());
-    body.set('is_bp_remains_prior', is_bp_remains_prior ? 'true' : 'false');
-    body.set('csrf', csrf);
-    body.set('csrf_token', csrf);
-
-    const req = await fetch('https://api.bilibili.com/x/ugcpay/web/v2/trade/elec/pay/quick', { method: 'POST', headers, body });
-    const res = await req.json() as APIReturn;
-
-    assert(res.code === 0, res.message);
-
-    return res.data as ElectricPayResultData;
-};
-
-const sendElectricMessage = async (
-    cookies: string,
-    order_id: string,
-    message: string,
-): Promise<void> => {
-    const csrf = extractCSRF(cookies);
-
-    assert(csrf !== undefined, '获取CSRF值失败');
-
-    const headers = new Headers();
-    headers.set('User-Agent', userAgent);
-    headers.set('Cookie', cookies);
-    headers.set('Referer', 'https://www.bilibili.com/');
-    headers.set('Content-Type', 'application/x-www-form-urlencoded');
-
-    const body = new URLSearchParams();
-    body.set('order_id', order_id);
-    body.set('message', message);
-    body.set('csrf', csrf);
-    body.set('csrf_token', csrf);
-
-    const req = await fetch('https://api.bilibili.com/x/ugcpay/trade/elec/message', { method: 'POST', headers, body });
-    const res = await req.json() as APIReturn;
-
-    assert(res.code === 0, res.message);
-};
-
 interface OrderData {
     bp: number;
     gold: number;
@@ -1060,9 +946,6 @@ export {
     getPrivilege,
     receivePrivilege,
     getUserCoupon,
-    getElectricMonth,
-    doElectricPay,
-    sendElectricMessage,
     createOrder,
     getUserInfo,
     doLiveDailySign,

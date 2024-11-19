@@ -29,10 +29,7 @@ interface Config {
     watchLive: boolean,
     getCoupon: boolean,
     useCoupon: boolean,
-    useCouponMode: number,
     useCouponTime: number,
-    useCouponRest: boolean,
-    chargeMsg: string,
 }
 
 export default async (cookies: string, config: Config) => {
@@ -53,10 +50,7 @@ export default async (cookies: string, config: Config) => {
             }: {
                 uid: number,
                 medals: Medal[],
-                useCouponMode: number,
                 useCouponTime: number,
-                useCouponRest: boolean,
-                chargeMsg: string,
                 danmuList: string[],
                 roomIDs: number[],
                 sendGiftType: number[],
@@ -123,10 +117,7 @@ export default async (cookies: string, config: Config) => {
                     () => module(cookies, {
                         uid,
                         medals,
-                        useCouponMode: config.useCouponMode,
                         useCouponTime: config.useCouponTime,
-                        useCouponRest: config.useCouponRest,
-                        chargeMsg: config.chargeMsg,
                         danmuList: config.medalDanmuContent,
                         roomIDs: config.roomIDs,
                         sendGiftType: config.sendGiftType,

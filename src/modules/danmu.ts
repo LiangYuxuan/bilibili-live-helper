@@ -47,7 +47,7 @@ export default async (
             () => sendDanmu(cookies, danmu, roomID),
             3,
             5000,
-            `粉丝勋章${medal.medalName} (${medal.targetName}) 打卡成功: ${medal.level > 20 ? '粉丝勋章已点亮' : '粉丝勋章已点亮 (亲密度+100)'}`,
+            `粉丝勋章${medal.medalName} (${medal.targetName}) 打卡成功: ${medal.level >= 20 ? '粉丝勋章已点亮' : '粉丝勋章已点亮 (亲密度+100)'}`,
             `粉丝勋章${medal.medalName} (${medal.targetName}) 打卡失败`,
         );
 

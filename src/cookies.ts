@@ -49,7 +49,7 @@ const evpkdf = (
     const times = Math.ceil((keySize + ivSize) / hashLength);
     const derivedKey = Buffer.alloc(keySize + ivSize);
 
-    let digest = Buffer.alloc(0);
+    let digest: Buffer = Buffer.alloc(0);
     for (let i = 0; i < times; i += 1) {
         const data = Buffer.concat([
             digest,

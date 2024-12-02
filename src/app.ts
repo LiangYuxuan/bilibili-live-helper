@@ -10,7 +10,6 @@ import pushToPushDeer from './push.ts';
 
 const config = {
     login: !!parseInt(process.env.LOGIN ?? '', 10),
-    liveDailySign: !!parseInt(process.env.LIVE_DAILY_SIGN ?? '', 10),
     medalDanmu: !!parseInt(process.env.MEDAL_DANMU ?? '', 10),
     medalDanmuContent: (process.env.MEDAL_DANMU_CONTENT ?? '').split(','),
     sendGift: !!parseInt(process.env.SEND_GIFT ?? '', 10),

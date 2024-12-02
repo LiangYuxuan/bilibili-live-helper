@@ -8,7 +8,6 @@ import gift from './modules/gift.ts';
 import likeLive from './modules/likeLive.ts';
 import login from './modules/login.ts';
 import shareLive from './modules/shareLive.ts';
-import signin from './modules/signin.ts';
 import useCoupon from './modules/useCoupon.ts';
 import watchLive from './modules/watchLive.ts';
 import { retry, getFullMedalList } from './utils.ts';
@@ -17,7 +16,6 @@ import type { Medal } from './utils.ts';
 
 interface Config {
     login: boolean,
-    liveDailySign: boolean,
     medalDanmu: boolean,
     medalDanmuContent: string[],
     sendGift: boolean,
@@ -72,11 +70,6 @@ export default async (cookies: string, config: Config) => {
             config.useCoupon,
             '使用B币卷',
             useCoupon,
-        ],
-        [
-            config.liveDailySign,
-            '直播区签到',
-            signin,
         ],
         [
             config.medalDanmu,

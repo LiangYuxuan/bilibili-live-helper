@@ -294,20 +294,6 @@ const getUserInfo = async (cookies: string): Promise<UserInfo> => {
     return res.data as UserInfo;
 };
 
-const doLiveDailySign = async (cookies: string): Promise<string> => {
-    const headers = new Headers();
-    headers.set('User-Agent', userAgent);
-    headers.set('Cookie', cookies);
-    headers.set('Referer', 'https://live.bilibili.com/');
-
-    const req = await fetch('https://api.live.bilibili.com/xlive/web-ucenter/v1/sign/DoSign', { headers });
-    const res = await req.json() as APIReturn;
-
-    assert(res.code === 0 || res.code === 1011040, res.message);
-
-    return res.message;
-};
-
 interface FansMedal {
     can_deleted: boolean;
     day_limit: number;
@@ -948,7 +934,6 @@ export {
     getUserCoupon,
     createOrder,
     getUserInfo,
-    doLiveDailySign,
     getMedalList,
     getWearedMedal,
     wearMedal,

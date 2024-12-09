@@ -25,8 +25,8 @@ importers:
         version: 4.19.2
     devDependencies:
       '@rhyster/eslint-config':
-        specifier: ^1.5.1
-        version: 1.5.1(eslint@9.16.0)(typescript@5.7.2)
+        specifier: ^1.6.0
+        version: 1.6.0(eslint@9.16.0)(typescript@5.7.2)
       '@types/node':
         specifier: ^22.10.1
         version: 22.10.1
@@ -263,8 +263,8 @@ packages:
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
 
-  '@rhyster/eslint-config@1.5.1':
-    resolution: {integrity: sha512-8uHfhvOiHix3zuZALOa6GBsoztfPol4aAAJb3CyyhkCxQGXPWBIJtJEbHa3gHhkTdSQUUayBIvH+Ow3wv1h53A==}
+  '@rhyster/eslint-config@1.6.0':
+    resolution: {integrity: sha512-tBvefEDT2tiNCrpcMCkguAyd+4CLeouP1rHOrY9IJfdIeIR9KDOe3fADhBnTzShMcyBrLn73CLnhorsOtgKYUw==}
     peerDependencies:
       eslint: '>= 9'
 
@@ -1138,7 +1138,7 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
-  '@rhyster/eslint-config@1.5.1(eslint@9.16.0)(typescript@5.7.2)':
+  '@rhyster/eslint-config@1.6.0(eslint@9.16.0)(typescript@5.7.2)':
     dependencies:
       '@eslint/js': 9.16.0
       '@stylistic/eslint-plugin': 2.11.0(eslint@9.16.0)(typescript@5.7.2)

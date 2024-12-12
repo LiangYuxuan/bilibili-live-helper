@@ -25,8 +25,8 @@ importers:
         version: 4.19.2
     devDependencies:
       '@rhyster/eslint-config':
-        specifier: ^1.6.2
-        version: 1.6.2(eslint@9.16.0)(typescript@5.7.2)
+        specifier: ^1.6.3
+        version: 1.6.3(eslint@9.16.0)(typescript@5.7.2)
       '@types/node':
         specifier: ^22.10.2
         version: 22.10.2
@@ -263,13 +263,13 @@ packages:
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
 
-  '@rhyster/eslint-config@1.6.2':
-    resolution: {integrity: sha512-4X5QYKcP6VNvPir7OCUJzEst9i+gdS/Y8cQxWFPrFzOP+34hUfmPCAPLqEC4kU+O/xexO/Y/vv/MuiageUWA/Q==}
+  '@rhyster/eslint-config@1.6.3':
+    resolution: {integrity: sha512-z6uRc9q+nX9ChJt8+MrWPCAg0Y/MFxiAFiO+2ANLwAsOUzQbqg9Gg1J/WNmM6jEZib+O+A2DOqkXBSMxbA4aQA==}
     peerDependencies:
       eslint: '>= 9'
 
-  '@stylistic/eslint-plugin@2.12.0':
-    resolution: {integrity: sha512-IvD2WXbOoSp0zNpyYbjdSyEjZtut78RYfj2WIlbChE7HFuposTK5X1hc5+4AyqYcjLXYdD5oo/sJtqMGFNRb1w==}
+  '@stylistic/eslint-plugin@2.12.1':
+    resolution: {integrity: sha512-fubZKIHSPuo07FgRTn6S4Nl0uXPRPYVNpyZzIDGfp7Fny6JjNus6kReLD7NI380JXi4HtUTSOZ34LBuNPO1XLQ==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       eslint: '>=8.40.0'
@@ -1120,10 +1120,10 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
-  '@rhyster/eslint-config@1.6.2(eslint@9.16.0)(typescript@5.7.2)':
+  '@rhyster/eslint-config@1.6.3(eslint@9.16.0)(typescript@5.7.2)':
     dependencies:
       '@eslint/js': 9.16.0
-      '@stylistic/eslint-plugin': 2.12.0(eslint@9.16.0)(typescript@5.7.2)
+      '@stylistic/eslint-plugin': 2.12.1(eslint@9.16.0)(typescript@5.7.2)
       confusing-browser-globals: 1.0.11
       eslint: 9.16.0
       eslint-import-resolver-typescript: 3.7.0(eslint-plugin-import-x@4.5.0(eslint@9.16.0)(typescript@5.7.2))(eslint@9.16.0)
@@ -1138,7 +1138,7 @@ snapshots:
       - supports-color
       - typescript
 
-  '@stylistic/eslint-plugin@2.12.0(eslint@9.16.0)(typescript@5.7.2)':
+  '@stylistic/eslint-plugin@2.12.1(eslint@9.16.0)(typescript@5.7.2)':
     dependencies:
       '@typescript-eslint/utils': 8.18.0(eslint@9.16.0)(typescript@5.7.2)
       eslint: 9.16.0

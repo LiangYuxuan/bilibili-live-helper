@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@rhyster/eslint-config": "^1.6.13",
-    "@types/node": "^22.10.3",
+    "@types/node": "^22.10.4",
     "@types/node-cron": "^3.0.11",
     "@types/qrcode": "^1.5.5",
     "eslint": "^9.17.0",

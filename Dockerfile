@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 
 COPY package.json pnpm-lock.yaml ./
 
-RUN corepack enable && pnpm install
+RUN npm install -g corepack@latest && corepack enable && pnpm install
 
 COPY src ./src
 COPY tsconfig.json ./

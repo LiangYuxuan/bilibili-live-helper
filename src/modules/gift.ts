@@ -37,7 +37,7 @@ export default async (cookies: string, {
 
     const pending = gifts.list.filter((value) => (
         sendGiftType.includes(value.gift_id)
-            && value.expire_at - gifts.time < 60 * 60 * 24 * sendGiftTime
+        && value.expire_at - gifts.time < 60 * 60 * 24 * sendGiftTime
     )).sort((left, right) => {
         if (left.expire_at !== right.expire_at) {
             return left.expire_at - right.expire_at;

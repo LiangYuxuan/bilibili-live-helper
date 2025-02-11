@@ -606,17 +606,98 @@ interface GiftBagList {
         gift_name: string;
         gift_num: number;
         gift_type: number;
-        corner_color: string;
-        bind_room_text: string;
-        bind_roomid: number;
         expire_at: number;
         corner_mark: string;
+        corner_color: string;
         count_map: {
             num: number;
             text: string;
         }[];
-    }[],
-    time: number,
+        bind_roomid: number;
+        bind_room_text: string;
+        type: number;
+        card_image: string;
+        card_gif: string;
+        card_id: number;
+        card_record_id: number;
+        is_show_send: boolean;
+        expire_text: string;
+        max_send_limit: number;
+        diy_count_map: number;
+        effect_id: number;
+    }[];
+    time: number;
+    gift_config: {
+        id: number;
+        name: string;
+        price: number;
+        type: number;
+        coin_type: string;
+        bag_gift: number;
+        effect: number;
+        corner_mark: string;
+        corner_background: string;
+        broadcast: number;
+        draw: number;
+        stay_time: number;
+        animation_frame_num: number;
+        desc: string;
+        rule: string;
+        rights: string;
+        privilege_required: number;
+        count_map: {
+            num: number;
+            text: string;
+            desc: string;
+            web_svga: string;
+            vertical_svga: string;
+            horizontal_svga: string;
+            special_color: string;
+            effect_id: number;
+        }[];
+        img_basic: string;
+        img_dynamic: string;
+        frame_animation: string;
+        gif: string;
+        webp: string;
+        full_sc_web: string;
+        full_sc_horizontal: string;
+        full_sc_vertical: string;
+        full_sc_horizontal_svga: string;
+        full_sc_vertical_svga: string;
+        bullet_head: string;
+        bullet_tail: string;
+        limit_interval: number;
+        bind_ruid: number;
+        bind_roomid: number;
+        gift_type: number;
+        combo_resources_id: number;
+        max_send_limit: number;
+        weight: number;
+        goods_id: number;
+        has_imaged_gift: number;
+        left_corner_text: string;
+        left_corner_background: string;
+        gift_banner: null;
+        diy_count_map: number;
+        effect_id: number;
+        first_tips: string;
+        gift_attrs: number[];
+        corner_mark_color: string;
+        corner_color_bg: string;
+        web_light: {
+            corner_mark: string;
+            corner_background: string;
+            corner_mark_color: string;
+            corner_color_bg: string;
+        };
+        web_dark: {
+            corner_mark: string;
+            corner_background: string;
+            corner_mark_color: string;
+            corner_color_bg: string;
+        };
+    }[];
 }
 
 const getGiftBagList = async (cookies: string): Promise<GiftBagList> => {
@@ -625,7 +706,7 @@ const getGiftBagList = async (cookies: string): Promise<GiftBagList> => {
     headers.set('Cookie', cookies);
     headers.set('Referer', 'https://live.bilibili.com/');
 
-    const req = await fetch('https://api.live.bilibili.com/gift/v2/gift/bag_list', { headers });
+    const req = await fetch('https://api.live.bilibili.com/xlive/web-room/v1/gift/bag_list', { headers });
     const res = await req.json() as APIReturn;
 
     assert(res.code === 0, res.message);

@@ -1,4 +1,3 @@
-import assert from 'node:assert';
 import util from 'node:util';
 
 import {
@@ -37,7 +36,7 @@ export default async (cookies: string, {
 
     const pending = gifts.list.filter((value) => (
         sendGiftType.includes(value.gift_id)
-        && value.expire_at - gifts.time < 60 * 60 * 24 * sendGiftTime
+        && value.expire_at - (Date.now() / 1000) < 60 * 60 * 24 * sendGiftTime
     )).sort((left, right) => {
         if (left.expire_at !== right.expire_at) {
             return left.expire_at - right.expire_at;
@@ -53,10 +52,8 @@ export default async (cookies: string, {
         const roomInfo = await doRoomInit(cookies, roomID);
         const medal = medals.find((value) => value.roomID === roomID);
 
-        assert(medal, `无法找到房间${roomID.toString()}对应的粉丝勋章`);
-
-        let restIntimacy = medal.dayLimit - medal.todayIntimacy;
-        logger.debug(`${medal.medalName} Daily Intimacy Rest ${restIntimacy.toString()}`);
+        let restIntimacy = medal ? (medal.dayLimit - medal.todayIntimacy) : 1500;
+        logger.debug(`Room ${roomID.toString()} Daily Intimacy Rest ${restIntimacy.toString()}`);
 
         for (const gift of pending) {
             const value = values.get(gift.gift_id);
@@ -65,14 +62,14 @@ export default async (cookies: string, {
                 : 0;
 
             if (value !== undefined && sendNum > 0) {
-                logger.debug(`Send Gift ${gift.gift_name} (${gift.gift_id.toString()}) ${sendNum.toString()}/${gift.gift_num.toString()} to ${medal.medalName}`);
+                logger.debug(`Send Gift ${gift.gift_name} (${gift.gift_id.toString()}) ${sendNum.toString()}/${gift.gift_num.toString()} to room ${roomID.toString()}`);
 
                 // eslint-disable-next-line no-await-in-loop
                 await sendGiftBag(
                     cookies,
                     uid,
                     gift.gift_id,
-                    medal.targetID,
+                    roomInfo.uid,
                     sendNum,
                     gift.bag_id,
                     roomInfo.room_id,
@@ -82,7 +79,7 @@ export default async (cookies: string, {
                 gift.gift_num -= sendNum;
                 restIntimacy -= value * sendNum;
 
-                logger.info(`向${medal.medalName}送出礼物${gift.gift_name}x${sendNum.toString()}成功: 获得亲密度${(value * sendNum).toString()} (今日距离上限${restIntimacy.toString()})`);
+                logger.info(`向${roomID.toString()}送出礼物${gift.gift_name}x${sendNum.toString()}成功: 获得亲密度${(value * sendNum).toString()} (今日距离上限${restIntimacy.toString()})`);
             }
         }
     }

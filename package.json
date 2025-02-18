@@ -21,7 +21,7 @@
     "tsx": "^4.19.2"
   },
   "devDependencies": {
-    "@rhyster/eslint-config": "^1.7.3",
+    "@rhyster/eslint-config": "^1.7.4",
     "@types/node": "^22.13.4",
     "@types/node-cron": "^3.0.11",
     "@types/qrcode": "^1.5.5",

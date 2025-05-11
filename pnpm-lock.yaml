@@ -15,8 +15,8 @@ importers:
         specifier: ^16.5.0
         version: 16.5.0
       node-cron:
-        specifier: ^3.0.3
-        version: 3.0.3
+        specifier: ^4.0.3
+        version: 4.0.3
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -1057,8 +1057,8 @@ packages:
     resolution: {integrity: sha512-8Ofs/AUQh8MaEcrlq5xOX0CQ9ypTF5dl78mjlMNfOK08fzpgTHQRQPBxcPlEtIw0yRpws+Zo/3r+5WRby7u3Gg==}
     engines: {node: '>= 0.6'}
 
-  node-cron@3.0.3:
-    resolution: {integrity: sha512-dOal67//nohNgYWb+nWmg5dkFdIwDm8EpeGYMekPMrngV3637lqnX0lbUcCtgibHTz6SEz7DAIjKvKDFYCnO1A==}
+  node-cron@4.0.3:
+    resolution: {integrity: sha512-YPEUlbYGgpfN44OtCm4KkK4TXjeIB4arERbDWP7kJgM+QHFK9AdM6/3bp4M3oB1QBrL5INyTRLAPei87j49foA==}
     engines: {node: '>=6.0.0'}
 
   nth-check@2.1.1:
@@ -1354,10 +1354,6 @@ packages:
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
-
-  uuid@8.3.2:
-    resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
-    hasBin: true
 
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
@@ -2438,9 +2434,7 @@ snapshots:
 
   negotiator@1.0.0: {}
 
-  node-cron@3.0.3:
-    dependencies:
-      uuid: 8.3.2
+  node-cron@4.0.3: {}
 
   nth-check@2.1.1:
     dependencies:
@@ -2746,8 +2740,6 @@ snapshots:
       punycode: 2.3.0
 
   util-deprecate@1.0.2: {}
-
-  uuid@8.3.2: {}
 
   vary@1.1.2: {}
 

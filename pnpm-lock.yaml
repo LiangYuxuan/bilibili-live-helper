@@ -15,8 +15,8 @@ importers:
         specifier: ^16.5.0
         version: 16.5.0
       node-cron:
-        specifier: ^4.0.5
-        version: 4.0.5
+        specifier: ^4.0.6
+        version: 4.0.6
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -28,8 +28,8 @@ importers:
         specifier: ^1.7.23
         version: 1.7.23(eslint@9.27.0)(typescript@5.8.3)
       '@types/node':
-        specifier: ^22.15.19
-        version: 22.15.19
+        specifier: ^22.15.21
+        version: 22.15.21
       '@types/node-cron':
         specifier: ^3.0.11
         version: 3.0.11
@@ -304,8 +304,8 @@ packages:
   '@types/node-cron@3.0.11':
     resolution: {integrity: sha512-0ikrnug3/IyneSHqCBeslAhlK2aBfYek1fGo4bP4QnZPmiqSGRK+Oy7ZMisLWkesffJvQ1cqAcBnJC+8+nxIAg==}
 
-  '@types/node@22.15.19':
-    resolution: {integrity: sha512-3vMNr4TzNQyjHcRZadojpRaD9Ofr6LsonZAoQ+HMUa/9ORTPoxVIw0e0mpqWpdjj8xybyCM+oKOUH2vwFu/oEw==}
+  '@types/node@22.15.21':
+    resolution: {integrity: sha512-EV/37Td6c+MgKAbkcLG6vqZ2zEYHD7bvSrzqqs2RIhbA6w3x+Dqz8MZM3sP6kGTeLrdoOgKZe+Xja7tUB2DNkQ==}
 
   '@types/qrcode@1.5.5':
     resolution: {integrity: sha512-CdfBi/e3Qk+3Z/fXYShipBT13OJ2fDO2Q2w5CIP5anLTLIndQG9z6P1cnm+8zCWSpm5dnxMFd/uREtb0EXuQzg==}
@@ -889,8 +889,8 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  node-cron@4.0.5:
-    resolution: {integrity: sha512-XN5PwNBniFz6y9Ic/VChtrBtlXfAqdKUFou7nid/1pLGNFKO7cXN1nmLKUL7KLnM/Y4nUe5/EC+GsAghCj/N5g==}
+  node-cron@4.0.6:
+    resolution: {integrity: sha512-T294pDgew/Nec/uXRoAcEbh+HIisrlZ7MeTx02KcLLI4eE89dwmUGSFT6L5kK7YrSSwa1Ovfm7ILpehiYVIrWQ==}
     engines: {node: '>=6.0.0'}
 
   nth-check@2.1.1:
@@ -1334,13 +1334,13 @@ snapshots:
 
   '@types/node-cron@3.0.11': {}
 
-  '@types/node@22.15.19':
+  '@types/node@22.15.21':
     dependencies:
       undici-types: 6.21.0
 
   '@types/qrcode@1.5.5':
     dependencies:
-      '@types/node': 22.15.19
+      '@types/node': 22.15.21
 
   '@typescript-eslint/eslint-plugin@8.32.1(@typescript-eslint/parser@8.32.1(eslint@9.27.0)(typescript@5.8.3))(eslint@9.27.0)(typescript@5.8.3)':
     dependencies:
@@ -1948,7 +1948,7 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  node-cron@4.0.5: {}
+  node-cron@4.0.6: {}
 
   nth-check@2.1.1:
     dependencies:

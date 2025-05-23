@@ -700,13 +700,16 @@ interface GiftBagList {
     }[];
 }
 
-const getGiftBagList = async (cookies: string): Promise<GiftBagList> => {
+const getGiftBagList = async (cookies: string, room_id: number): Promise<GiftBagList> => {
     const headers = new Headers();
     headers.set('User-Agent', userAgent);
     headers.set('Cookie', cookies);
     headers.set('Referer', 'https://live.bilibili.com/');
 
-    const req = await fetch('https://api.live.bilibili.com/xlive/web-room/v1/gift/bag_list', { headers });
+    const params = new URLSearchParams();
+    params.set('room_id', room_id.toString());
+
+    const req = await fetch(`https://api.live.bilibili.com/xlive/web-room/v1/gift/bag_list?${params}`, { headers });
     const res = await req.json() as APIReturn;
 
     assert(res.code === 0, res.message);

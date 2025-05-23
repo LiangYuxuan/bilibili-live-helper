@@ -26,7 +26,7 @@ export default async (cookies: string, {
         giftInfo,
     ] = await Promise.all([
         getFullMedalList(cookies),
-        getGiftBagList(cookies),
+        getGiftBagList(cookies, roomIDs[0]),
         getGiftConfig(cookies),
     ]);
 

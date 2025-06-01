@@ -16,16 +16,16 @@
   "dependencies": {
     "crypto-es": "^2.1.0",
     "dotenv": "^16.5.0",
-    "node-cron": "^4.0.7",
+    "node-cron": "^4.1.0",
     "qrcode": "^1.5.4",
     "tsx": "^4.19.4"
   },
   "devDependencies": {
     "@rhyster/eslint-config": "^1.7.25",
-    "@types/node": "^22.15.24",
+    "@types/node": "^22.15.29",
     "@types/node-cron": "^3.0.11",
     "@types/qrcode": "^1.5.5",
-    "eslint": "^9.27.0",
+    "eslint": "^9.28.0",
     "typescript": "^5.8.3"
   },
   "packageManager": "pnpm@10.11.0"

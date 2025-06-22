@@ -16,12 +16,12 @@
   "dependencies": {
     "crypto-es": "^2.1.0",
     "dotenv": "^16.5.0",
-    "node-cron": "^4.1.0",
+    "node-cron": "^4.1.1",
     "qrcode": "^1.5.4",
     "tsx": "^4.20.3"
   },
   "devDependencies": {
-    "@rhyster/eslint-config": "^1.7.27",
+    "@rhyster/eslint-config": "^1.7.28",
     "@types/node": "^22.15.32",
     "@types/node-cron": "^3.0.11",
     "@types/qrcode": "^1.5.5",

@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "crypto-es": "^2.1.0",
-    "dotenv": "^16.5.0",
+    "dotenv": "^16.6.0",
     "node-cron": "^4.1.1",
     "qrcode": "^1.5.4",
     "tsx": "^4.20.3"
@@ -28,5 +28,5 @@
     "eslint": "^9.29.0",
     "typescript": "^5.8.3"
   },
-  "packageManager": "pnpm@10.12.3"
+  "packageManager": "pnpm@10.12.4"
 }

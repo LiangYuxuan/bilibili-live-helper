@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       crypto-es:
-        specifier: ^3.0.1
-        version: 3.0.1
+        specifier: ^3.0.2
+        version: 3.0.2
       dotenv:
         specifier: ^17.2.1
         version: 17.2.1
@@ -544,8 +544,8 @@ packages:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
     engines: {node: '>= 8'}
 
-  crypto-es@3.0.1:
-    resolution: {integrity: sha512-DII7RIiOS48qeisWXYRCjJ4m7OC6engQBMZaqrX5dvgfE+hV5KHhfZWPKzJtKVI5d2LfC3Kv3GbsDH1nUnk6cg==}
+  crypto-es@3.0.2:
+    resolution: {integrity: sha512-RWXfqgln+2iDNq6KMwFsxTXJlLWd+j18TfqzenVdrimDmchshshZkqegBCnLAQkP+qUP+GlhRK/PSBK2ByVbeg==}
     engines: {node: '>=18.0.0'}
 
   cssesc@3.0.0:
@@ -1596,7 +1596,7 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  crypto-es@3.0.1: {}
+  crypto-es@3.0.2: {}
 
   cssesc@3.0.0: {}
 

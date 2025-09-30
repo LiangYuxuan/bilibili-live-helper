@@ -8,7 +8,7 @@ export default async (
     cookies: string,
     { medals }: { medals: Medal[] },
 ): Promise<void> => {
-    for (const medal of medals.filter((value) => value.level < 20)) {
+    for (const medal of medals) {
         let { roomID } = medal;
         if (roomID < 10000) {
             // eslint-disable-next-line no-await-in-loop

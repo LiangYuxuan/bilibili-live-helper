@@ -21,6 +21,8 @@ const config = {
     likeLive: !!parseInt(process.env.LIKE_LIVE ?? '', 10),
     shareLive: !!parseInt(process.env.SHARE_LIVE ?? '', 10),
     watchLive: !!parseInt(process.env.WATCH_LIVE ?? '', 10),
+    watchLiveRoomIDs:
+        (process.env.WATCH_LIVE_ROOM_ID ?? '').split(',').map((value) => parseInt(value, 10)).filter((value) => !Number.isNaN(value)),
     getCoupon: !!parseInt(process.env.GET_COUPON ?? '', 10),
     useCoupon: !!parseInt(process.env.USE_COUPON ?? '', 10),
     useCouponTime: Number.isNaN(parseInt(process.env.USE_COUPON_TIME ?? '', 10)) ? 1 : parseInt(process.env.USE_COUPON_TIME ?? '', 10),

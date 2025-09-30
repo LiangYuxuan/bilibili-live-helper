@@ -25,6 +25,7 @@ interface Config {
     likeLive: boolean,
     shareLive: boolean,
     watchLive: boolean,
+    watchLiveRoomIDs: number[],
     getCoupon: boolean,
     useCoupon: boolean,
     useCouponTime: number,
@@ -44,7 +45,7 @@ export default async (cookies: string, config: Config) => {
     const castTable: [
         boolean, string, (
             cookies: string, {
-                uid, medals, danmuList, roomIDs, sendGiftType, sendGiftTime,
+                uid, medals, danmuList, roomIDs, sendGiftType, sendGiftTime, watchLiveRoomIDs,
             }: {
                 uid: number,
                 medals: Medal[],
@@ -53,6 +54,7 @@ export default async (cookies: string, config: Config) => {
                 roomIDs: number[],
                 sendGiftType: number[],
                 sendGiftTime: number,
+                watchLiveRoomIDs: number[],
             },
         ) => Promise<void>,
     ][] = [
@@ -115,6 +117,7 @@ export default async (cookies: string, config: Config) => {
                         roomIDs: config.roomIDs,
                         sendGiftType: config.sendGiftType,
                         sendGiftTime: config.sendGiftTime,
+                        watchLiveRoomIDs: config.watchLiveRoomIDs,
                     }),
                     3,
                     1000,

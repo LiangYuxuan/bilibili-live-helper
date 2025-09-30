@@ -161,23 +161,29 @@ const roomHeartbeat = async (
 
 export default async (
     cookies: string,
-    { medals }: { medals: Medal[] },
+    { medals, watchLiveRoomIDs }: { medals: Medal[], watchLiveRoomIDs: number[] },
 ) => {
     const buvid = extractBUVID(cookies);
 
     assert(buvid !== undefined, '获取LIVE_BUVID值失败');
 
-    for (const medal of medals.filter((value) => value.level < 20)) {
-        // eslint-disable-next-line no-await-in-loop
-        await retry(
-            () => {
-                logger.info(`开始观看直播间 ${medal.targetName} (${medal.roomID.toString()})`);
-                return roomHeartbeat(cookies, buvid, medal.roomID, medal.targetID);
-            },
-            3,
-            1000,
-            `观看直播间 ${medal.targetName} (${medal.roomID.toString()}) 完成`,
-            `观看直播间 ${medal.targetName} (${medal.roomID.toString()}) 失败`,
-        );
+    for (const roomID of watchLiveRoomIDs) {
+        const medal = medals.find((value) => value.roomID === roomID);
+
+        if (medal !== undefined) {
+            // eslint-disable-next-line no-await-in-loop
+            await retry(
+                () => {
+                    logger.info(`开始观看直播间 ${medal.targetName} (${medal.roomID.toString()})`);
+                    return roomHeartbeat(cookies, buvid, medal.roomID, medal.targetID);
+                },
+                3,
+                1000,
+                `观看直播间 ${medal.targetName} (${medal.roomID.toString()}) 完成`,
+                `观看直播间 ${medal.targetName} (${medal.roomID.toString()}) 失败`,
+            );
+        } else {
+            logger.warn(`未找到直播间 ${roomID.toString()} 对应的粉丝勋章，跳过观看直播。`);
+        }
     }
 };

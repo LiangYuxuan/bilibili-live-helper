@@ -1,6 +1,14 @@
 import assert from 'node:assert';
 
-import CryptoES from 'crypto-es';
+import {
+    HmacMD5,
+    HmacSHA1,
+    HmacSHA256,
+    HmacSHA224,
+    HmacSHA512,
+    HmacSHA384,
+    Hex,
+} from 'crypto-es';
 
 import { getRoomInfo, enterRoomHeartbeat, inRoomHeartbeat } from '../api.ts';
 import logger from '../logger.ts';
@@ -46,17 +54,17 @@ const calcHeartbeatHMAC = (
     return rules.reduce((prev, rule) => {
         switch (rule) {
             case 0:
-                return CryptoES.HmacMD5(prev, key).toString(CryptoES.enc.Hex);
+                return HmacMD5(prev, key).toString(Hex);
             case 1:
-                return CryptoES.HmacSHA1(prev, key).toString(CryptoES.enc.Hex);
+                return HmacSHA1(prev, key).toString(Hex);
             case 2:
-                return CryptoES.HmacSHA256(prev, key).toString(CryptoES.enc.Hex);
+                return HmacSHA256(prev, key).toString(Hex);
             case 3:
-                return CryptoES.HmacSHA224(prev, key).toString(CryptoES.enc.Hex);
+                return HmacSHA224(prev, key).toString(Hex);
             case 4:
-                return CryptoES.HmacSHA512(prev, key).toString(CryptoES.enc.Hex);
+                return HmacSHA512(prev, key).toString(Hex);
             case 5:
-                return CryptoES.HmacSHA384(prev, key).toString(CryptoES.enc.Hex);
+                return HmacSHA384(prev, key).toString(Hex);
             default:
                 return prev;
         }

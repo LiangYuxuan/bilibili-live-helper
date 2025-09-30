@@ -44,10 +44,18 @@ export default async (
 
         // eslint-disable-next-line no-await-in-loop
         await retry(
-            () => sendDanmu(cookies, danmu, roomID),
+            async () => {
+                for (let i = 0; i < 10; i += 1) {
+                    // eslint-disable-next-line no-await-in-loop
+                    await sendDanmu(cookies, danmu, roomID);
+
+                    // eslint-disable-next-line no-await-in-loop
+                    await delay(1000);
+                }
+            },
             3,
             5000,
-            `粉丝勋章${medal.medalName} (${medal.targetName}) 打卡成功: ${medal.level >= 20 ? '粉丝勋章已点亮' : '粉丝勋章已点亮 (亲密度+100)'}`,
+            `粉丝勋章${medal.medalName} (${medal.targetName}) 打卡成功`,
             `粉丝勋章${medal.medalName} (${medal.targetName}) 打卡失败`,
         );
 

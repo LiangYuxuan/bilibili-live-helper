@@ -22,10 +22,10 @@
   },
   "devDependencies": {
     "@rhyster/eslint-config": "^1.8.9",
-    "@types/node": "^22.18.10",
+    "@types/node": "^22.18.11",
     "@types/node-cron": "^3.0.11",
     "@types/qrcode": "^1.5.5",
-    "eslint": "^9.37.0",
+    "eslint": "^9.38.0",
     "typescript": "^5.9.3"
   },
   "packageManager": "pnpm@10.18.3"

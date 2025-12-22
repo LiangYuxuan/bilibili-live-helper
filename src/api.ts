@@ -856,7 +856,7 @@ const sendGiftBag = async (
     body.set('csrf', csrf);
     body.set('csrf_token', csrf);
 
-    const req = await fetch('https://api.live.bilibili.com/xlive/revenue/v1/gift/sendBag', { method: 'POST', headers, body });
+    const req = await fetch('https://api.live.bilibili.com/xlive/revenue/v2/gift/sendBag', { method: 'POST', headers, body });
     const res = await req.json() as APIReturn;
 
     assert(res.code === 0, res.message);

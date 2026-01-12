@@ -114,6 +114,7 @@ const checkLogin = async (qrcode_key: string) => {
 (async () => {
     const { url: qrcodeContent, qrcode_key } = await getLoginUrl();
 
+    // eslint-disable-next-line @typescript-eslint/no-base-to-string
     console.info(await QRCode.toString(qrcodeContent, { type: 'terminal', small: true }));
 
     console.info('请使用哔哩哔哩手机客户端扫描二维码登录');

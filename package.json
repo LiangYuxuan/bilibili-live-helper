@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "crypto-es": "^3.1.2",
-    "dotenv": "^17.2.4",
+    "dotenv": "^17.3.1",
     "node-cron": "^4.2.1",
     "qrcode": "^1.5.4",
     "tsx": "^4.21.0"

@@ -18,7 +18,7 @@
     "dotenv": "^17.4.2",
     "node-cron": "^4.2.1",
     "qrcode": "^1.5.4",
-    "tsx": "^4.22.1"
+    "tsx": "^4.22.2"
   },
   "devDependencies": {
     "@rhyster/eslint-config": "^2.0.12",
@@ -28,5 +28,5 @@
     "eslint": "^10.4.0",
     "typescript": "^6.0.3"
   },
-  "packageManager": "pnpm@11.1.2"
+  "packageManager": "pnpm@11.1.3"
 }

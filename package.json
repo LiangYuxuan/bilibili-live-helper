@@ -28,5 +28,5 @@
     "eslint": "^10.8.0",
     "typescript": "^6.0.3"
   },
-  "packageManager": "pnpm@11.19.0"
+  "packageManager": "pnpm@11.20.0"
 }

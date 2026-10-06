@@ -76,6 +76,12 @@ const isDomainMatch = (cookieDomain: string, domain: string): boolean => {
     return domain === cookieDomain;
 };
 
+const isCookiesData = (value: unknown): value is CookiesData => (
+    typeof value === 'object'
+    && value !== null
+    && typeof (value as CookiesData).cookie_data === 'object'
+);
+
 export default async (host: string, domain: string): Promise<string> => {
     if (COOKIES.length > 0) {
         logger.info('使用环境变量中的Cookies');
@@ -87,7 +93,8 @@ export default async (host: string, domain: string): Promise<string> => {
         && COOKIE_CLOUD_UUID.length > 0
         && COOKIE_CLOUD_KEY.length > 0
     ) {
-        const res = await fetch(`${COOKIE_CLOUD_URL}/get/${COOKIE_CLOUD_UUID}`);
+        const cookieCloudEndpoint = COOKIE_CLOUD_URL + '/get/' + encodeURIComponent(COOKIE_CLOUD_UUID);
+        const res = await fetch(cookieCloudEndpoint);
         const json = await res.json() as EncryptedCookiesData | undefined;
         if (json?.encrypted !== undefined) {
             const encrypted = Buffer.from(json.encrypted, 'base64');
@@ -95,18 +102,26 @@ export default async (host: string, domain: string): Promise<string> => {
             const salt = encrypted.subarray(8, 16);
             const ciphertext = encrypted.subarray(16);
 
-            const hash = createHash('md5').update(`${COOKIE_CLOUD_UUID}-${COOKIE_CLOUD_KEY}`);
+            const hash = createHash('md5').update(COOKIE_CLOUD_UUID + '-' + COOKIE_CLOUD_KEY);
             const secret = hash.digest().toString('hex').substring(0, 16);
             const { key, iv } = evpkdf(Buffer.from(secret, 'utf-8'), salt, 32, 16);
 
-            const cipher = createDecipheriv('aes-256-cbc', key, iv);
-            const text = Buffer.concat([
-                cipher.update(ciphertext),
-                cipher.final(),
-            ]).toString('utf-8');
-            const data = JSON.parse(text) as CookiesData;
+            let data: CookiesData | undefined;
+            try {
+                const cipher = createDecipheriv('aes-256-cbc', key, iv);
+                const text = Buffer.concat([
+                    cipher.update(ciphertext),
+                    cipher.final(),
+                ]).toString('utf-8');
+                const parsed = JSON.parse(text) as unknown;
+                if (isCookiesData(parsed)) {
+                    data = parsed;
+                }
+            } catch {
+                logger.warn('CookieCloud返回的数据无法解密或校验失败，数据可能已被篡改');
+            }
 
-            if (data.cookie_data[host]) {
+            if (data?.cookie_data[host]) {
                 logger.info('使用CookieCloud中的Cookies');
 
                 const cookies = data.cookie_data[host]

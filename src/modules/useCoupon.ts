@@ -9,21 +9,31 @@ export default async (
     cookies: string,
     { useCouponTime }: { useCouponTime: number },
 ): Promise<void> => {
-    const today = new Date();
-    const prev = new Date(today.getTime() - 31 * 24 * 60 * 60 * 1000);
+    const today = Temporal.Now.plainDateISO('Asia/Shanghai');
+    const prev = today.subtract({ days: 31 });
 
-    const todayText = `${today.toISOString().slice(0, 10)} 23:59:59`;
-    const prevText = `${prev.toISOString().slice(0, 10)} 00:00:00`;
+    const todayText = `${today.toString()} 23:59:59`;
+    const prevText = `${prev.toString()} 00:00:00`;
 
-    const coupons = await getUserCoupon(cookies, prevText, todayText, today.getTime());
+    const now = Temporal.Now.instant();
+    const useCouponDuration = Temporal.Duration.from({ days: useCouponTime });
+
+    const coupons = await getUserCoupon(cookies, prevText, todayText, now.epochMilliseconds);
 
     logger.debug(util.format('Coupons: %o', coupons));
 
     const balance = coupons.result
-        .filter(
-            (value) => value.couponBalance > 0 && value.couponDueTime > today.getTime()
-                && value.couponDueTime - today.getTime() < useCouponTime * 24 * 60 * 60 * 1000,
-        )
+        .filter((value) => {
+            if (value.couponBalance <= 0) {
+                return false;
+            }
+
+            const due = Temporal.Instant.fromEpochMilliseconds(value.couponDueTime);
+            const dueDuration = now.until(due);
+
+            return dueDuration.sign === 1
+                && Temporal.Duration.compare(dueDuration, useCouponDuration) <= 0;
+        })
         .reduce((total, curr) => total + curr.couponBalance, 0);
 
     if (balance === 0) {

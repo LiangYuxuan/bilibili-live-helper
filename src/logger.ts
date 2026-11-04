@@ -3,25 +3,25 @@ const pushText = [] as string[];
 const expose = {
     debug: (text: string) => {
         if (process.env.NODE_ENV === 'development') {
-            console.info((new Date()).toISOString(), text);
+            console.info(Temporal.Now.instant().toString(), text);
         }
     },
     info: (text: string, allSuccess = true) => {
         isAllSuccess &&= allSuccess;
 
-        console.info((new Date()).toISOString(), text);
+        console.info(Temporal.Now.instant().toString(), text);
         pushText.push(`✅${text}`);
     },
     warn: (text: string, allSuccess = true) => {
         isAllSuccess &&= allSuccess;
 
-        console.warn((new Date()).toISOString(), text);
+        console.warn(Temporal.Now.instant().toString(), text);
         pushText.push(`⚠️${text}`);
     },
     error: (text: string, allSuccess = false) => {
         isAllSuccess &&= allSuccess;
 
-        console.error((new Date()).toISOString(), text);
+        console.error(Temporal.Now.instant().toString(), text);
         pushText.push(`❌${text}`);
     },
     getPushInfo: () => ({

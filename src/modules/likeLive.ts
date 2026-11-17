@@ -26,7 +26,12 @@ export default async (
 
         // eslint-disable-next-line no-await-in-loop
         await retry(
-            () => likeInteract(cookies, roomID, medal.targetID, Date.now()),
+            () => likeInteract(
+                cookies,
+                roomID,
+                medal.targetID,
+                Temporal.Now.instant().epochMilliseconds,
+            ),
             3,
             5000,
             `粉丝勋章${medal.medalName} (${medal.targetName}) 点赞房间成功`,

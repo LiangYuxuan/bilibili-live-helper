@@ -34,10 +34,20 @@ export default async (cookies: string, {
     giftInfo.forEach((value) => values.set(value.id, Math.ceil(value.price / 100)));
     values.set(30607, 50);
 
-    const pending = gifts.list.filter((value) => (
-        sendGiftType.includes(value.gift_id)
-        && value.expire_at - (Date.now() / 1000) < 60 * 60 * 24 * sendGiftTime
-    )).sort((left, right) => {
+    const now = Temporal.Now.instant();
+    const sendGiftDuration = Temporal.Duration.from({ days: sendGiftTime });
+
+    const pending = gifts.list.filter((value) => {
+        if (!sendGiftType.includes(value.gift_id)) {
+            return false;
+        }
+
+        const due = Temporal.Instant.fromEpochMilliseconds(value.expire_at * 1000);
+        const dueDuration = now.until(due);
+
+        return dueDuration.sign === 1
+            && Temporal.Duration.compare(dueDuration, sendGiftDuration) <= 0;
+    }).sort((left, right) => {
         if (left.expire_at !== right.expire_at) {
             return left.expire_at - right.expire_at;
         }
@@ -73,7 +83,7 @@ export default async (cookies: string, {
                     sendNum,
                     gift.bag_id,
                     roomInfo.room_id,
-                    Math.round(Date.now() / 1000),
+                    Math.round(Temporal.Now.instant().epochMilliseconds / 1000),
                 );
 
                 gift.gift_num -= sendNum;

@@ -83,10 +83,11 @@ const getLoginInfo = async (qrcode_key: string) => {
 };
 
 const checkLogin = async (qrcode_key: string) => {
-    const startTime = Date.now();
+    const startTime = Temporal.Now.instant();
+    const duration = Temporal.Duration.from({ minutes: 3 });
     let isScanned = false;
 
-    while (Date.now() - startTime < 3 * 60 * 1000) {
+    while (Temporal.Duration.compare(Temporal.Now.instant().since(startTime), duration) === -1) {
         // eslint-disable-next-line no-await-in-loop
         const { data, cookies } = await getLoginInfo(qrcode_key);
 

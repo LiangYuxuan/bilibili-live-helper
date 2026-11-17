@@ -589,7 +589,7 @@ const sendDanmu = async (cookies: string, msg: string, roomid: number, color = '
     body.set('fontsize', fontsize.toString());
     body.set('mode', mode.toString());
     body.set('bubble', bubble.toString());
-    body.set('rnd', Math.round(Date.now() / 1000).toString());
+    body.set('rnd', Math.round(Temporal.Now.instant().epochMilliseconds / 1000).toString());
     body.set('csrf', csrf);
     body.set('csrf_token', csrf);
 

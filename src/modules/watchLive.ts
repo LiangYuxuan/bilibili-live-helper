@@ -101,7 +101,7 @@ const roomHeartbeat = async (
         ]),
         JSON.stringify([buvid, uuid]),
         targetID,
-        Date.now(),
+        Temporal.Now.instant().epochMilliseconds,
         0,
         JSON.stringify([]),
     );
@@ -117,7 +117,7 @@ const roomHeartbeat = async (
         await delay(nextTime * 1000);
         duration += nextTime;
 
-        const now = Date.now();
+        const now = Temporal.Now.instant().epochMilliseconds;
         const hmac = calcHeartbeatHMAC(
             key,
             rules,

@@ -8,8 +8,7 @@ import { getFullMedalList } from '../utils.ts';
 
 export default async (cookies: string, {
     uid, roomIDs, sendGiftType, sendGiftTime,
-}:
-{
+}: {
     uid: number,
     roomIDs: number[],
     sendGiftType: number[],
